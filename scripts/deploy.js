@@ -30,7 +30,8 @@ function saveFrontendFiles(contract, contractName) {
   const contractsDir = __dirname + "/../frontend/src/artifacts";
 
   if (!fs.existsSync(contractsDir)) {
-    fs.mkdirSync(contractsDir);
+    console.log("Making directory ", contractsDir);
+    fs.mkdirSync(contractsDir, { recursive: true });
   }
 
   fs.writeFileSync(

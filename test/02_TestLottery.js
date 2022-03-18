@@ -26,7 +26,29 @@ describe("Betting Contract", function () {
     await lottery.deployed();
   });
 
-  describe.only("Enter lottery", function () {
+  describe.only("Create game", function () {
+    it("Should return game status", async function () {
+      // ARRANGE
+      await lottery.createGame(
+        1,
+        "ArsenalVsBarcelona",
+        "Emirates Stadium",
+        "Arsenal",
+        "Barcelona",
+        "",
+        0,
+        0
+      );
+      // ACT
+      await lottery.updateGame(0, "", 1);
+      const status = await lottery.getGameStatus(0);
+
+      // ASSERT
+      expect(status.state).to.equal(1);
+    });
+  });
+
+  describe("Enter lottery", function () {
     it("Should return staker info", async function () {
       // ARRANGE
       token.transfer(addr2.address, ethers.utils.parseEther("0.5"));

@@ -23,48 +23,80 @@ contract Lottery is Ownable {
         debeToken = IERC20(_debeTokenAddress);
     }
 
+    enum LOTTERY_STATE {
+        OPEN,
+        CLOSED,
+        CALCULATING_WINNER
+    }
+
+    LOTTERY_STATE public lottery_state;
+
+    enum GAME_STATE {
+        open,
+        running,
+        closed,
+        finished,
+        cancelled,
+        postponed
+    }
+
+    GAME_STATE public game_state;
+
+    struct GameStruct {
+        string gameName;
+        string stadium;
+        string homeTeam;
+        string awayTeam;
+        string result;
+        GAME_STATE state;
+        uint totalAmountStaked;
+    }
+
     struct PlayersStruct {
         uint stakedAmount;
-        string betOnThis;
+        string betOnTeam;
         bool winner;
         bool rewarded;
         uint blockNumber;
     }
     // mapping players to know stake amount and what they bet on
-    mapping(address => mapping(address => uint)) public stakingBalance; // test if needed
-    mapping(address=>mapping(address=>uint)) public allowance;
+    mapping(address => mapping(address => uint)) public stakingBalance; // test if this is really needed
     mapping(address => PlayersStruct) public balances;
+    mapping(uint8 => GameStruct) public games;
     
     address payable[] public playerList; // list of all players
     address payable[] public winnerList; // list of winners
     uint256 public winPool; // prize for winners
     uint256 public totalValueLocked; // total valu elocked for all stakes and tokens
-
-    // THIS FUTURE FEATURE IS NOT YET IMPLEMENTED
-    // FOR NOW ALL PLAYERS CAN USE ONLY DAPP TOKEN
-    // mapping token address -> staker address -> amount
-    /*
-    mapping(address => mapping(address => uint256)) public stakingBalance;
-    mapping(address => uint256) public uniqueTokensStaked;
-    address[] public allowedTokens; // only allowed tokens can be used for betting
-    */
     
+    // to save on contract cost, all games will be in one contract
+    // this function creates a game
+    function createGame(uint8 gameID, string memory _gameName, string memory _stadium, string memory _homeTeam, string memory _awayTeam, string memory _result, GAME_STATE _state, uint _amount )  public payable onlyOwner {
+        games[gameID].gameName = _gameName;
+        games[gameID].stadium = _stadium;
+        games[gameID].homeTeam = _homeTeam;
+        games[gameID].awayTeam = _awayTeam;
+        games[gameID].result = _result;
+        games[gameID].state = _state;
+        games[gameID].totalAmountStaked += _amount;
+    }
 
-    enum LOTTERY_STATE {
-        OPEN,
-        CLOSED,
-        CALCULATING_WINNER
-    } // enum states are represented by numbers 0,1,2,...
+    function getGameStatus(uint8 gameID) public view returns(GAME_STATE state, uint amount){
+        return (games[gameID].state, games[gameID].totalAmountStaked);
+    }
 
-    LOTTERY_STATE public lottery_state;
+    function updateGame(uint8 gameID, string memory _result, GAME_STATE _state) public onlyOwner {
+        games[gameID].result = _result;
+        games[gameID].state = _state;
+    }
 
    // staking tokens means entering the lottery, user can unstake their tokens for as long as the match has not started yet
    // I know the token address because it is my token
-   function enterLottery(string memory _betOnThis, address _token, uint _amount) public payable {
+   function enterLottery(string memory _betOnTeam, address _token, uint _amount) public payable {
        require(lottery_state == LOTTERY_STATE.OPEN);
        require(_amount > 0, "Amount must be more than 0");
        // require(tokenIsAllowed(_token), "Token is currently not allowed");
-       require(bytes(_betOnThis).length >= 1, "No winner has been selected");
+       require(bytes(_betOnTeam).length >= 1, "No winner has been selected");
 
        address staker = msg.sender;
        uint amount = _amount;
@@ -81,7 +113,7 @@ contract Lottery is Ownable {
 
        // add player to the struct
        balances[staker].stakedAmount += stakeAmount;
-       balances[staker].betOnThis = _betOnThis;
+       balances[staker].betOnTeam = _betOnTeam;
        balances[staker].blockNumber = block.number;
        balances[staker].winner = false;
        balances[staker].rewarded = false;
@@ -172,7 +204,7 @@ contract Lottery is Ownable {
        for (uint i=0; i<playerList.length; i++) {
 
            // compare strings
-           if(keccak256(abi.encodePacked(balances[playerList[i]].betOnThis)) == keccak256(abi.encodePacked(_result)))
+           if(keccak256(abi.encodePacked(balances[playerList[i]].betOnTeam)) == keccak256(abi.encodePacked(_result)))
            {
                balances[playerList[i]].winner = true;
                winnerList.push(payable(playerList[i]));

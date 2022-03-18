@@ -1,4 +1,5 @@
 const fs = require("fs");
+const ethers = require("ethers");
 
 // This file is only here to make interacting with the Dapp easier,
 // feel free to ignore it if you don't need it.
@@ -47,7 +48,8 @@ task("faucet", "Sends ETH and tokens to an address")
       sender.address
     );
 
-    const tx = await token.transfer(receiver, 100);
+    const amount = ethers.utils.parseEther("1000");
+    const tx = await token.transfer(receiver, amount);
     await tx.wait();
 
     const tx2 = await sender.sendTransaction({
@@ -63,5 +65,5 @@ task("faucet", "Sends ETH and tokens to an address")
       receiver
     );
 
-    console.log(`Transferred 1 ETH and 100 tokens to ${receiver}`);
+    console.log(`Transferred 1 ETH and ${amount} tokens to ${receiver}`);
   });
