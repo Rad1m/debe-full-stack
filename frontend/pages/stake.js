@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 import tokenAddress from "../src/artifacts/Token-address.json";
 import tokenAbi from "../src/artifacts/Token-info.json";
 import contractAddress from "../src/artifacts/Lottery-address.json";
@@ -34,27 +34,28 @@ export function Stake() {
         contractAddress.Contract
       );
       console.log("Wallet balance %s", balanceSender);
-      console.log("Contract balance %s", balanceContractBefore);
 
       // approve contract here and stake
-      await token.approve(
-        stakingContract.address,
-        ethers.utils.parseEther("1000000000")
-      );
+      console.log("Approving...");
+      const maxAmount = ethers.utils.parseEther("1000000000");
+      await token.approve(stakingContract.address, maxAmount);
+      console.log("Approved. Continue...");
 
       // Enter lottery
+      const amount = ethers.utils.parseEther("1");
       console.log("Entering lottery...");
       await stakingContract.enterLottery(
         "Arsenal",
         tokenAddress.Contract,
-        ethers.utils.parseEther("50")
+        amount
       );
 
       // Check balance has changed
       const balanceContractAfter = await token.balanceOf(
         contractAddress.Contract
       );
-      console.log("Stake %s success", balanceContractAfter);
+      console.log("Contract balance before %s", balanceContractBefore);
+      console.log("Contract balance after %s", balanceContractAfter);
     } catch (e) {
       console.log(e);
     }

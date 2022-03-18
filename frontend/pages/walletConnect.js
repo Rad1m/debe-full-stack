@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { useContract } from "./hooks/contract";
 
 export function WalletButton() {
   const [hasMetamask, setHasMetamask] = useState();
@@ -17,7 +18,7 @@ export function WalletButton() {
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
-      getSigner();
+      // getSigner();
     } catch (e) {
       console.log(e);
     }
