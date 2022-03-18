@@ -18,7 +18,7 @@ export function WalletButton() {
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
-      // getSigner();
+      getSigner();
     } catch (e) {
       console.log(e);
     }
