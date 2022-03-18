@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import tokenAddress from "../src/contracts/token-address.json";
-import tokenAbi from "../src/contracts/DeBeToken.json";
-import contractAddress from "../src/contracts/contract-address.json";
-import contractAbi from "../src/contracts/Lottery.json";
+import tokenAddress from "../src/artifacts/Token-address.json";
+import tokenAbi from "../src/artifacts/Token-info.json";
+import contractAddress from "../src/artifacts/Lottery-address.json";
+import contractAbi from "../src/artifacts/Lottery-info.json";
 
 export function Stake() {
   async function stake() {
@@ -11,27 +11,50 @@ export function Stake() {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const debeTokenContract = new ethers.Contract(
+      const walletAddress = await signer.getAddress();
+
+      console.log("Continue with signer...", walletAddress);
+
+      const token = new ethers.Contract(
         tokenAddress.Contract,
         tokenAbi.abi,
         signer
       );
+
       const stakingContract = new ethers.Contract(
         contractAddress.Contract,
         contractAbi.abi,
         signer
       );
+
+      console.log("Continue with contract...", stakingContract.address);
+
+      const balanceSender = await token.balanceOf(signer.getAddress());
+      const balanceContractBefore = await token.balanceOf(
+        contractAddress.Contract
+      );
+      console.log("Wallet balance %s", balanceSender);
+      console.log("Contract balance %s", balanceContractBefore);
+
       // approve contract here and stake
-      await debeTokenContract.approve(
+      await token.approve(
         stakingContract.address,
         ethers.utils.parseEther("1000000000")
       );
+
+      // Enter lottery
+      console.log("Entering lottery...");
       await stakingContract.enterLottery(
         "Arsenal",
-        debeTokenContract.address,
-        ethers.utils.parseEther("10000")
+        tokenAddress.Contract,
+        ethers.utils.parseEther("50")
       );
-      console.log("Stake success");
+
+      // Check balance has changed
+      const balanceContractAfter = await token.balanceOf(
+        contractAddress.Contract
+      );
+      console.log("Stake %s success", balanceContractAfter);
     } catch (e) {
       console.log(e);
     }
