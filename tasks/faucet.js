@@ -14,7 +14,41 @@ task("faucet", "Sends ETH and tokens to an address")
       );
     }
 
+    const addressesFile =
+      __dirname + "/../frontend/src/artifacts/Token-address.json";
+
+    console.log("File is ", addressesFile);
+
+    if (!fs.existsSync(addressesFile)) {
+      console.error("You need to deploy your contract first");
+      return;
+    } else {
+      console.log("Found token address...");
+    }
+
+    const addressJson = fs.readFileSync(addressesFile);
+    const address = JSON.parse(addressJson);
+
+    if ((await ethers.provider.getCode(address.Contract)) === "0x") {
+      console.error("You need to deploy your contract first");
+      return;
+    } else {
+      console.log("Token address is %s . Continue... ", address.Contract);
+    }
+
+    const token = await ethers.getContractAt("Token", address.Contract);
     const [sender] = await ethers.getSigners();
+
+    const balanceSender = await token.balanceOf(sender.address);
+
+    console.log(
+      "Sender balance is %s address %s ",
+      balanceSender,
+      sender.address
+    );
+
+    const tx = await token.transfer(receiver, 100);
+    await tx.wait();
 
     const tx2 = await sender.sendTransaction({
       to: receiver,
@@ -22,5 +56,12 @@ task("faucet", "Sends ETH and tokens to an address")
     });
     await tx2.wait();
 
-    console.log(`Transferred 1 ETH tokens to ${receiver}`);
+    const balanceReceiver = await token.balanceOf(receiver);
+    console.log(
+      "Receiver balance is %s address %s ",
+      balanceReceiver,
+      receiver
+    );
+
+    console.log(`Transferred 1 ETH and 100 tokens to ${receiver}`);
   });
