@@ -30,7 +30,7 @@ describe("Betting Contract", function () {
     it("Should return game status", async function () {
       // ARRANGE
       await lottery.createGame(
-        1,
+        0,
         "ArsenalVsBarcelona",
         "Emirates Stadium",
         "Arsenal",
@@ -41,7 +41,8 @@ describe("Betting Contract", function () {
       );
       // ACT
       await lottery.updateGame(0, "", 1);
-      const status = await lottery.getGameStatus(0);
+      const status = await lottery.games(0);
+      console.log("Game name is ", status.gameName);
 
       // ASSERT
       expect(status.state).to.equal(1);
