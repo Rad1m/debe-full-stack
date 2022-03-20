@@ -1,7 +1,7 @@
 import React from "react";
 import { Stake } from "./stake";
 import { WalletButton } from "./walletConnect";
-import { Games } from "./games";
+import Canvas from "./canvas";
 
 export default function Home() {
   return (
@@ -9,8 +9,7 @@ export default function Home() {
       <h1>Connect wallet</h1>
       <WalletButton />
       <Stake />
-      <Games id={0} />
-      <Games id={1} />
+      <Canvas />
     </div>
   );
 }

@@ -8,7 +8,7 @@ export const gameInfo = atomFamily({
     homeTeam: "",
     awayTeam: "",
     result: "",
-    status: "",
+    gameStatus: "",
     totalAmountStaked: 0,
   },
 });

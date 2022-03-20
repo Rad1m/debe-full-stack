@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 import tokenAddress from "../src/artifacts/Token-address.json";
 import tokenAbi from "../src/artifacts/Token-info.json";
 import contractAddress from "../src/artifacts/Lottery-address.json";
