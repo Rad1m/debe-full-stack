@@ -17,6 +17,7 @@ export function WalletButton() {
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
       setHasMetamask(true);
+      connect();
     }
   }, []);
 

@@ -1,4 +1,24 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
+
+export const gameInfo = atomFamily({
+  key: "gameInfo",
+  default: {
+    gameName: "",
+    stadium: "",
+    homeTeam: "",
+    awayTeam: "",
+    result: "",
+    status: "",
+    totalAmountStaked: 0,
+  },
+});
+
+export const gameIds = atom({
+  key: "gameIds",
+  default: {
+    ids: [],
+  },
+});
 
 export const walletInfo = atom({
   key: "walletInfo",

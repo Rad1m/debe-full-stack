@@ -10,9 +10,9 @@ async function main() {
   );
   const [sender] = await ethers.getSigners();
 
-  const tx = await lottery.createGame(
+  const tx0 = await lottery.createGame(
     0,
-    "ArsenalVsBarcelona",
+    "Arsenal Vs Barcelona",
     "Emirates Stadium",
     "Arsenal",
     "Barcelona",
@@ -21,11 +21,25 @@ async function main() {
     0
   );
 
-  await tx.wait();
-  console.log("Game created...");
+  await tx0.wait();
 
-  const status = await lottery.games(0);
-  console.log("Game name is", status.gameName);
+  const tx1 = await lottery.createGame(
+    1,
+    "Aston Villa vs Burnley",
+    "Villa Park",
+    "Aston Villa",
+    "Burnley",
+    "",
+    0,
+    0
+  );
+
+  await tx1.wait();
+
+  const status0 = await lottery.games(0);
+  const status1 = await lottery.games(1);
+  console.log("Game name is", status0.gameName);
+  console.log("Game name is", status1.gameName);
 }
 
 main()

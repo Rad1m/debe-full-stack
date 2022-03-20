@@ -1,6 +1,4 @@
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
+import React from "react";
 import { Stake } from "./stake";
 import { WalletButton } from "./walletConnect";
 import { Games } from "./games";
@@ -11,7 +9,8 @@ export default function Home() {
       <h1>Connect wallet</h1>
       <WalletButton />
       <Stake />
-      <Games />
+      <Games id={0} />
+      <Games id={1} />
     </div>
   );
 }
