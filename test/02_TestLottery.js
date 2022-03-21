@@ -31,21 +31,29 @@ describe("Betting Contract", function () {
       // ARRANGE
       await lottery.createGame(
         0,
-        "ArsenalVsBarcelona",
+        "Arsenal vs Barcelona",
         "Emirates Stadium",
         "Arsenal",
         "Barcelona",
+        "",
         "",
         0,
         0
       );
       // ACT
-      await lottery.updateGame(0, "", 1);
-      const status = await lottery.games(0);
-      console.log("Game name is ", status.gameName);
+      await lottery.updateGame(0, "Arsenal", "2:1", 3);
+      const gameInfo = await lottery.games(0);
+
+      console.log(
+        "%s %s %s",
+        gameInfo.homeTeam,
+        gameInfo.result,
+        gameInfo.awayTeam
+      );
+      console.log("Game is", gameInfo.state);
 
       // ASSERT
-      expect(status.state).to.equal(1);
+      expect(gameInfo.state).to.equal(3);
     });
   });
 

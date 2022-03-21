@@ -17,6 +17,7 @@ async function main() {
     "Arsenal",
     "Barcelona",
     "",
+    "",
     0,
     0
   );
@@ -29,8 +30,9 @@ async function main() {
     "Villa Park",
     "Aston Villa",
     "Burnley",
-    "",
-    0,
+    "Burnley",
+    "2:3",
+    3,
     0
   );
 
@@ -38,8 +40,10 @@ async function main() {
 
   const status0 = await lottery.games(0);
   const status1 = await lottery.games(1);
+  const gameCount = await lottery.gamesCount;
   console.log("Game name is", status0.gameName);
   console.log("Game name is", status1.gameName);
+  console.log("Got %s game", gameCount.length);
 }
 
 main()

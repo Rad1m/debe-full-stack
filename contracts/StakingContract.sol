@@ -47,6 +47,7 @@ contract Lottery is Ownable {
         string stadium;
         string homeTeam;
         string awayTeam;
+        string winner;
         string result;
         GAME_STATE state;
         uint totalAmountStaked;
@@ -71,11 +72,12 @@ contract Lottery is Ownable {
     
     // to save on contract cost, all games will be in one contract
     // this function creates a game
-    function createGame(uint8 gameID, string memory _gameName, string memory _stadium, string memory _homeTeam, string memory _awayTeam, string memory _result, GAME_STATE _state, uint _amount )  public payable onlyOwner {
+    function createGame(uint8 gameID, string memory _gameName, string memory _stadium, string memory _homeTeam, string memory _awayTeam, string memory _winner,string memory _result, GAME_STATE _state, uint _amount )  public payable onlyOwner {
         games[gameID].gameName = _gameName;
         games[gameID].stadium = _stadium;
         games[gameID].homeTeam = _homeTeam;
         games[gameID].awayTeam = _awayTeam;
+        games[gameID].winner = _winner;
         games[gameID].result = _result;
         games[gameID].state = _state;
         games[gameID].totalAmountStaked += _amount;
@@ -85,7 +87,8 @@ contract Lottery is Ownable {
         return (games[gameID].state, games[gameID].totalAmountStaked);
     }
 
-    function updateGame(uint8 gameID, string memory _result, GAME_STATE _state) public onlyOwner {
+    function updateGame(uint8 gameID, string memory _winner,string memory _result, GAME_STATE _state) public onlyOwner {
+        games[gameID].winner = _winner;
         games[gameID].result = _result;
         games[gameID].state = _state;
     }
