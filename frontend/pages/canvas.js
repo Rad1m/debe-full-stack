@@ -9,10 +9,10 @@ export default function Canvas() {
   var i = 0;
   while (i < 2) {
     gameList.push(<Games key={i} id={i} />);
-    const gameInf = useRecoilValue(gameInfo(i));
-    console.log(gameInf.gameName);
     i++;
+    console.log("Generating game", i);
   }
+  console.log("Canvas ready");
 
   return <div className={styles.grid}>{gameList}</div>;
 }

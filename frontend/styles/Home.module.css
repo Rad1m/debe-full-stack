@@ -91,13 +91,13 @@
   border-radius: 5px;
   transition: color 0.15s ease, border-color 0.3s ease;
   min-width: 200px;
-  min-height: 200px;
+  min-height: 250px;
   max-width: 300px;
-  max-height: 400px;
+  max-height: 600px;
 }
 
 .card:hover {
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 16px 0 red;
 }
 .card:focus,
 .card:active {

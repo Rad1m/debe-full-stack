@@ -62,8 +62,10 @@ export function WalletButton() {
   }
 
   return (
-    <button onClick={connect}>
-      {wallet.address ? <p>{wallet.address}</p> : <h3>Connect</h3>}
-    </button>
+    <div>
+      <button onClick={connect}>
+        {wallet.address ? <p>{wallet.address}</p> : <h3>Connect</h3>}
+      </button>
+    </div>
   );
 }

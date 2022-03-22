@@ -15,9 +15,7 @@ export const gameInfo = atomFamily({
 
 export const gameIds = atom({
   key: "gameIds",
-  default: {
-    ids: [],
-  },
+  default: [],
 });
 
 export const walletInfo = atom({
