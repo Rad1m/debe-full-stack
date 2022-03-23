@@ -123,6 +123,14 @@
   margin-left: 0.5rem;
 }
 
+.button {
+  color: #000000;
+  border-color: #000000;
+  border-radius: 5px;
+  min-width: 80px;
+  min-height: 30px;
+}
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;

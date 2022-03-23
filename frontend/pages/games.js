@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ethers } from "ethers";
 import { contractInfo, gameInfo, tokenInfo, walletInfo } from "./atoms/atoms";
@@ -24,6 +24,7 @@ export function Games(props) {
   const [game, setGame] = useRecoilState(gameInfo(props.id));
   const [contract, setContract] = useState();
   const [token, setToken] = useState();
+  const [stakingAllowed, setStakingAlloed] = useState(false);
 
   // use effect if metamask connected
   useEffect(() => {
@@ -62,6 +63,30 @@ export function Games(props) {
     }
   }
 
+  const stake = async (event) => {
+    event.preventDefault();
+    console.log("Staking...");
+
+    try {
+      // approve contract here and stake
+      console.log("Approving...");
+      const maxAmount = ethers.utils.parseEther("1000000000");
+      await token.approve(contract.address, maxAmount);
+      console.log("Approved. Continue...");
+
+      // Enter lottery
+      const amount = ethers.utils.parseEther(
+        event.target.amount.value.toString()
+      );
+      console.log("Entering lottery...", amount.toString());
+      await contract.enterLottery("Arsenal", token.address, amount);
+
+      event.target.amount.value = "";
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.container}>
@@ -69,9 +94,23 @@ export function Games(props) {
         <p>Location {game.stadium}</p>
         <p>Game: {gameStatusEnum[game.gameStatus]}</p>
         <p>TVL {ethers.utils.formatEther(game.totalAmountStaked)}</p>
-        {game.gameStatus === 0 && <StakingForm id={props.id} />}
-        {game.gameStatus >= 3 && <button>Unstake</button>}
       </div>
+      <div class="btn-group">
+        <button className={styles.button}>{game.homeTeam}</button>
+        <button className={styles.button}>Draw</button>
+        <button className={styles.button}>{game.awayTeam}</button>
+      </div>
+      <form onSubmit={stake}>
+        <label htmlFor="amount">Amount</label>
+        <input
+          id={props.id}
+          name="amount"
+          type="number"
+          autoComplete="amount"
+          required
+        />
+        <button type="submit">Stake</button>
+      </form>
     </div>
   );
 }
