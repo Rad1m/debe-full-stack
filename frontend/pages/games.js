@@ -4,7 +4,6 @@ import { ethers } from "ethers";
 import { contractInfo, gameInfo, tokenInfo, walletInfo } from "./atoms/atoms";
 import { useContract } from "./hooks/utilities";
 import styles from "../styles/Home.module.css";
-import { StakingForm } from "./components/stakingForm";
 
 export function Games(props) {
   // list to simulate enum, enums are not supported in javascript
@@ -63,6 +62,7 @@ export function Games(props) {
     }
   }
 
+  // Enter Lottery
   const stake = async (event) => {
     event.preventDefault();
     console.log("Staking...");
@@ -95,10 +95,12 @@ export function Games(props) {
         <p>Game: {gameStatusEnum[game.gameStatus]}</p>
         <p>TVL {ethers.utils.formatEther(game.totalAmountStaked)}</p>
       </div>
-      <div class="btn-group">
-        <button className={styles.button}>{game.homeTeam}</button>
-        <button className={styles.button}>Draw</button>
-        <button className={styles.button}>{game.awayTeam}</button>
+      <div className={styles.border}>
+        <div class="btn-group">
+          <button className={styles.buttonGroup}>{game.homeTeam}</button>
+          <button className={styles.buttonGroup}>Draw</button>
+          <button className={styles.buttonGroup}>{game.awayTeam}</button>
+        </div>
       </div>
       <form onSubmit={stake}>
         <label htmlFor="amount">Amount</label>
@@ -109,7 +111,9 @@ export function Games(props) {
           autoComplete="amount"
           required
         />
-        <button type="submit">Stake</button>
+        <button className={styles.button} type="submit">
+          Stake
+        </button>
       </form>
     </div>
   );

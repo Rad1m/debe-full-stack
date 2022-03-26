@@ -99,11 +99,6 @@
 .card:hover {
   box-shadow: 0 8px 16px 0 red;
 }
-.card:focus,
-.card:active {
-  color: #0070f3;
-  border-color: #0070f3;
-}
 
 .card h2 {
   margin: 0 0 0 0;
@@ -124,11 +119,41 @@
 }
 
 .button {
+  margin: 3px;
   color: #000000;
-  border-color: #000000;
+  border-color: blue;
   border-radius: 5px;
   min-width: 80px;
   min-height: 30px;
+}
+
+.button:hover {
+  color: red;
+}
+
+.buttonGroup {
+  color: #000000;
+  border-radius: 0px;
+  border: none;
+  min-width: 80px;
+  min-height: 30px;
+}
+
+.buttonGroup:hover {
+  color: red;
+}
+.buttonGroup:focus,
+.buttonGroup:active {
+  color: red;
+  border: none;
+  font-weight: bold;
+}
+
+.border {
+  margin: 3px;
+  text-align: center;
+  border-radius: 3px;
+  background-color: blueviolet;
 }
 
 @media (max-width: 600px) {
