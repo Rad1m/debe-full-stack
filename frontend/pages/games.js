@@ -24,6 +24,8 @@ export function Games(props) {
   const [contract, setContract] = useState();
   const [token, setToken] = useState();
   const [stakingAllowed, setStakingAlloed] = useState(false);
+  const [winner, setWinner] = useState("");
+  const categoryOptions = [game.homeTeam, "Draw", game.awayTeam];
 
   // use effect if metamask connected
   useEffect(() => {
@@ -31,7 +33,8 @@ export function Games(props) {
       getToken();
       getGame();
     }
-  }, [wallet]);
+    console.log("Winner", props.id, winner);
+  }, [wallet, winner]);
 
   async function getToken() {
     try {
@@ -79,7 +82,8 @@ export function Games(props) {
         event.target.amount.value.toString()
       );
       console.log("Entering lottery...", amount.toString());
-      await contract.enterLottery("Arsenal", token.address, amount);
+      console.log("Betting on...", winner);
+      await contract.enterLottery(winner, token.address, amount);
 
       event.target.amount.value = "";
     } catch (e) {
@@ -96,21 +100,19 @@ export function Games(props) {
         <p>TVL {ethers.utils.formatEther(game.totalAmountStaked)}</p>
       </div>
       <div className={styles.border}>
-        <div class="btn-group">
-          <button className={styles.buttonGroup}>{game.homeTeam}</button>
-          <button className={styles.buttonGroup}>Draw</button>
-          <button className={styles.buttonGroup}>{game.awayTeam}</button>
-        </div>
+        {categoryOptions.map((category) => (
+          <button
+            type="button"
+            className={styles.buttonGroup}
+            onClick={() => setWinner(category)}
+          >
+            {category}
+          </button>
+        ))}
       </div>
-      <form onSubmit={stake}>
+      <form className={styles.form} onSubmit={stake}>
         <label htmlFor="amount">Amount</label>
-        <input
-          id={props.id}
-          name="amount"
-          type="number"
-          autoComplete="amount"
-          required
-        />
+        <input id={props.id} name="amount" type="number" required />
         <button className={styles.button} type="submit">
           Stake
         </button>

@@ -79,6 +79,7 @@
   margin: 1rem;
   padding: 1.5rem;
   text-align: left;
+  justify-content: center;
   color: inherit;
   text-decoration: none;
   background: linear-gradient(
@@ -120,21 +121,28 @@
 
 .button {
   margin: 3px;
-  color: #000000;
-  border-color: blue;
+  color: whitesmoke;
+  border-color: transparent;
   border-radius: 5px;
+  border-width: 0;
+  background-color: darkslategray;
   min-width: 80px;
   min-height: 30px;
+  box-shadow: 0px 4px 4px 0px #888888;
+  text-align: center;
+  justify-content: center;
 }
 
 .button:hover {
-  color: red;
+  color: white;
+  background-color: red;
+  font-weight: bold;
 }
 
 .buttonGroup {
   color: #000000;
   border-radius: 0px;
-  border: none;
+  border: 0px;
   min-width: 80px;
   min-height: 30px;
 }
@@ -145,15 +153,31 @@
 .buttonGroup:focus,
 .buttonGroup:active {
   color: red;
-  border: none;
   font-weight: bold;
+}
+
+.polaroid {
+  width: 284px;
+  padding: 10px 10px 20px 10px;
+  border: 1px solid #bfbfbf;
+  background-color: white;
+  box-shadow: 10px 10px 5px #aaaaaa;
 }
 
 .border {
   margin: 3px;
   text-align: center;
+  justify-content: center;
   border-radius: 3px;
   background-color: blueviolet;
+}
+
+.form {
+  margin: 3px;
+  padding: 5px;
+  text-align: center;
+  justify-content: center;
+  background-color: inherit;
 }
 
 @media (max-width: 600px) {
