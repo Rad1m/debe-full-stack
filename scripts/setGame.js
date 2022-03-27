@@ -12,7 +12,7 @@ async function main() {
 
   const tx0 = await lottery.createGame(
     0,
-    "Arsenal Vs Barcelona",
+    "Arsenal vs Barcelona",
     "Emirates Stadium",
     "Arsenal",
     "Barcelona",
@@ -33,17 +33,15 @@ async function main() {
     "Burnley",
     "2:3",
     3,
-    0
+    ethers.utils.parseEther("5")
   );
 
   await tx1.wait();
 
   const status0 = await lottery.games(0);
   const status1 = await lottery.games(1);
-  const gameCount = await lottery.gamesCount;
   console.log("Game name is", status0.gameName);
   console.log("Game name is", status1.gameName);
-  console.log("Got %s game", gameCount.length);
 }
 
 main()

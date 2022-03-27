@@ -26,7 +26,7 @@ describe("Betting Contract", function () {
     await lottery.deployed();
   });
 
-  describe.only("Create game", function () {
+  describe("Create game", function () {
     it("Should return game status", async function () {
       // ARRANGE
       await lottery.createGame(
@@ -57,12 +57,25 @@ describe("Betting Contract", function () {
     });
   });
 
-  describe("Enter lottery", function () {
+  describe.only("Enter lottery", function () {
     it("Should return staker info", async function () {
       // ARRANGE
       token.transfer(addr2.address, ethers.utils.parseEther("0.5"));
       console.log("Owner is %s", owner.address);
       console.log("Addr2 is %s", addr2.address);
+
+      // ARRANGE
+      await lottery.createGame(
+        0,
+        "Arsenal vs Barcelona",
+        "Emirates Stadium",
+        "Arsenal",
+        "Barcelona",
+        "",
+        "",
+        0,
+        0
+      );
 
       // ACT
       await token
@@ -72,6 +85,7 @@ describe("Betting Contract", function () {
       await lottery
         .connect(addr2)
         .enterLottery(
+          0,
           "ARSENAL",
           token.address,
           ethers.utils.parseEther("0.05")

@@ -95,7 +95,7 @@ contract Lottery is Ownable {
 
    // staking tokens means entering the lottery, user can unstake their tokens for as long as the match has not started yet
    // I know the token address because it is my token
-   function enterLottery(string memory _betOnTeam, address _token, uint _amount) public payable {
+   function enterLottery(uint8 gameID, string memory _betOnTeam, address _token, uint _amount) public payable {
        require(lottery_state == LOTTERY_STATE.OPEN);
        require(_amount > 0, "Amount must be more than 0");
        // require(tokenIsAllowed(_token), "Token is currently not allowed");
@@ -120,6 +120,7 @@ contract Lottery is Ownable {
        balances[staker].blockNumber = block.number;
        balances[staker].winner = false;
        balances[staker].rewarded = false;
+       games[gameID].totalAmountStaked += stakeAmount;
 
        // update total value locked
        totalValueLocked += stakeAmount;

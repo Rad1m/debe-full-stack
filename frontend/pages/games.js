@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ethers } from "ethers";
 import { contractInfo, gameInfo, tokenInfo, walletInfo } from "./atoms/atoms";
 import { useContract } from "./hooks/utilities";
 import styles from "../styles/Home.module.css";
+import classNames from "classnames";
+import { style } from "@mui/system";
 
 export function Games(props) {
   // list to simulate enum, enums are not supported in javascript
@@ -26,6 +28,7 @@ export function Games(props) {
   const [stakingAllowed, setStakingAlloed] = useState(false);
   const [winner, setWinner] = useState("");
   const categoryOptions = [game.homeTeam, "Draw", game.awayTeam];
+  const currentCategoryRef = useRef();
 
   // use effect if metamask connected
   useEffect(() => {
@@ -66,7 +69,7 @@ export function Games(props) {
   }
 
   // Enter Lottery
-  const stake = async (event) => {
+  const enterLottery = async (event) => {
     event.preventDefault();
     console.log("Staking...");
 
@@ -83,7 +86,7 @@ export function Games(props) {
       );
       console.log("Entering lottery...", amount.toString());
       console.log("Betting on...", winner);
-      await contract.enterLottery(winner, token.address, amount);
+      await contract.enterLottery(props.id, winner, token.address, amount);
 
       event.target.amount.value = "";
     } catch (e) {
@@ -103,14 +106,19 @@ export function Games(props) {
         {categoryOptions.map((category) => (
           <button
             type="button"
-            className={styles.buttonGroup}
+            className={
+              category == winner
+                ? styles.buttonGroupSelected
+                : styles.buttonGroup
+            }
             onClick={() => setWinner(category)}
           >
             {category}
           </button>
         ))}
       </div>
-      <form className={styles.form} onSubmit={stake}>
+      <div className={styles.border}>{winner}</div>
+      <form className={styles.form} onSubmit={enterLottery}>
         <label htmlFor="amount">Amount</label>
         <input id={props.id} name="amount" type="number" required />
         <button className={styles.button} type="submit">
