@@ -7,6 +7,7 @@ export const gameInfo = atomFamily({
     stadium: "",
     homeTeam: "",
     awayTeam: "",
+    winner: "",
     result: "",
     gameStatus: "",
     totalAmountStaked: 0,

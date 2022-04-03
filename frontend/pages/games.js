@@ -4,8 +4,6 @@ import { ethers } from "ethers";
 import { contractInfo, gameInfo, tokenInfo, walletInfo } from "./atoms/atoms";
 import { useContract } from "./hooks/utilities";
 import styles from "../styles/Home.module.css";
-import classNames from "classnames";
-import { style } from "@mui/system";
 
 export function Games(props) {
   // list to simulate enum, enums are not supported in javascript
@@ -36,7 +34,6 @@ export function Games(props) {
       getToken();
       getGame();
     }
-    console.log("Winner", props.id, winner);
   }, [wallet, winner]);
 
   async function getToken() {
@@ -59,6 +56,7 @@ export function Games(props) {
         stadium: gameInfo.stadium,
         homeTeam: gameInfo.homeTeam,
         awayTeam: gameInfo.awayTeam,
+        winner: gameInfo.winner,
         result: gameInfo.result,
         gameStatus: gameInfo.state,
         totalAmountStaked: gameInfo.totalAmountStaked,
@@ -86,8 +84,16 @@ export function Games(props) {
       );
       console.log("Entering lottery...", amount.toString());
       console.log("Betting on...", winner);
-      await contract.enterLottery(props.id, winner, token.address, amount);
+      const transaction = await contract.enterLottery(
+        props.id,
+        winner,
+        token.address,
+        amount
+      );
+      await transaction.wait();
 
+      // update TVL displayed on card and reset form
+      getGame();
       event.target.amount.value = "";
     } catch (e) {
       console.log(e);
@@ -102,29 +108,56 @@ export function Games(props) {
         <p>Game: {gameStatusEnum[game.gameStatus]}</p>
         <p>TVL {ethers.utils.formatEther(game.totalAmountStaked)}</p>
       </div>
-      <div className={styles.border}>
-        {categoryOptions.map((category) => (
-          <button
-            type="button"
-            className={
-              category == winner
-                ? styles.buttonGroupSelected
-                : styles.buttonGroup
-            }
-            onClick={() => setWinner(category)}
-          >
-            {category}
+      {/* Staking is allowed */}
+      {game.gameStatus === 0 && (
+        <div>
+          <div className={styles.border}>
+            {categoryOptions.map((category) => (
+              <button
+                type="button"
+                className={
+                  category == winner
+                    ? styles.buttonGroupSelected
+                    : styles.buttonGroup
+                }
+                onClick={() => setWinner(category)}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+          <div className={styles.winnerBox}>{winner}</div>
+          <form className={styles.form} onSubmit={enterLottery}>
+            <label htmlFor="amount">Amount</label>
+            <input id={props.id} name="amount" type="number" required />
+            <button className={styles.button} type="submit">
+              Stake
+            </button>
+            <button className={styles.button} type="submit">
+              Unstake
+            </button>
+          </form>
+        </div>
+      )}
+
+      {game.gameStatus === 3 && (
+        <div className={styles.container}>
+          <div className={styles.winnerBox}>Result {game.result}</div>
+          <div className={styles.winnerBox}>Winner {game.winner}</div>
+          <button className={styles.button} type="button">
+            Claim
           </button>
-        ))}
-      </div>
-      <div className={styles.border}>{winner}</div>
-      <form className={styles.form} onSubmit={enterLottery}>
-        <label htmlFor="amount">Amount</label>
-        <input id={props.id} name="amount" type="number" required />
-        <button className={styles.button} type="submit">
-          Stake
-        </button>
-      </form>
+        </div>
+      )}
+
+      {game.gameStatus === 4 && (
+        <div className={styles.container}>
+          <div className={styles.winnerBox}>Game is cancelled</div>
+          <button className={styles.button} type="button">
+            Claim
+          </button>
+        </div>
+      )}
     </div>
   );
 }
