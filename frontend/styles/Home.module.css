@@ -78,7 +78,8 @@
 .card {
   margin: 1rem;
   padding: 1.5rem;
-  text-align: left;
+  text-align: center;
+  align-items: center;
   justify-content: center;
   color: inherit;
   text-decoration: none;
@@ -86,15 +87,13 @@
     to top,
     white 0%,
     white 50%,
-    rgb(143, 255, 246) 50%,
+    rgb(143, 255, 246) 60%,
     rgb(143, 255, 246)
   );
   border-radius: 5px;
   transition: color 0.15s ease, border-color 0.3s ease;
-  min-width: 200px;
-  min-height: 250px;
-  max-width: 300px;
-  max-height: 600px;
+  width: 300px;
+  height: 330px;
 }
 
 .card:hover {
@@ -125,7 +124,7 @@
   border-color: transparent;
   border-radius: 5px;
   border-width: 0;
-  background-color: darkslategray;
+  background-color: rgb(138, 83, 46);
   min-width: 80px;
   min-height: 30px;
   box-shadow: 0px 4px 4px 0px #888888;
@@ -136,6 +135,13 @@
 .button:hover {
   color: white;
   background-color: red;
+  font-weight: bold;
+}
+
+.button:disabled {
+  color: white;
+  background-color: rgb(200, 200, 200);
+  box-shadow: 0px 0px 0px 0px #888888;
   font-weight: bold;
 }
 

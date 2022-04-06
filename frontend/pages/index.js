@@ -8,7 +8,6 @@ export default function Home() {
     <div>
       <h1>Connect wallet</h1>
       <WalletButton />
-      <Stake />
       <Canvas />
     </div>
   );

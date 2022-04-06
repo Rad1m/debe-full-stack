@@ -23,7 +23,7 @@ export function Games(props) {
   const [game, setGame] = useRecoilState(gameInfo(props.id));
   const [contract, setContract] = useState();
   const [token, setToken] = useState();
-  const [stakingAllowed, setStakingAlloed] = useState(false);
+  const [stakeAllowed, setStakeAllowed] = useState(false);
   const [winner, setWinner] = useState("");
   const categoryOptions = [game.homeTeam, "Draw", game.awayTeam];
   const currentCategoryRef = useRef();
@@ -34,7 +34,11 @@ export function Games(props) {
       getToken();
       getGame();
     }
-  }, [wallet, winner]);
+
+    if (winner.length > 1) {
+      setStakeAllowed(true);
+    }
+  }, [wallet, winner, game]);
 
   async function getToken() {
     try {
@@ -69,7 +73,7 @@ export function Games(props) {
   // Enter Lottery
   const enterLottery = async (event) => {
     event.preventDefault();
-    console.log("Staking...");
+    console.log("Button...", event.target.stakeUnstake.id);
 
     try {
       // approve contract here and stake
@@ -100,16 +104,28 @@ export function Games(props) {
     }
   };
 
+  const unstake = async (event) => {
+    event.preventDefault();
+    const amount = ethers.utils.parseEther(
+      event.target.amount.value.toString()
+    );
+    console.log("Unstake", amount);
+    event.target.amount.value = "";
+  };
+
+  const claim = async (event) => {};
+
+  const withdraw = async (event) => {};
+
   return (
     <div className={styles.card}>
       <div className={styles.container}>
         <h2>{game.gameName}</h2>
         <p>Location {game.stadium}</p>
-        <p>Game: {gameStatusEnum[game.gameStatus]}</p>
+        <p>Game {gameStatusEnum[game.gameStatus]}</p>
         <p>TVL {ethers.utils.formatEther(game.totalAmountStaked)}</p>
       </div>
-      {/* Staking is allowed */}
-      {game.gameStatus === 0 && (
+      {(game.gameStatus === 0) | (game.gameStatus === 5) && (
         <div>
           <div className={styles.border}>
             {categoryOptions.map((category) => (
@@ -129,14 +145,35 @@ export function Games(props) {
           <div className={styles.winnerBox}>{winner}</div>
           <form className={styles.form} onSubmit={enterLottery}>
             <label htmlFor="amount">Amount</label>
-            <input id={props.id} name="amount" type="number" required />
-            <button className={styles.button} type="submit">
-              Stake
-            </button>
-            <button className={styles.button} type="submit">
-              Unstake
-            </button>
+            <div class="controlGroup">
+              <input id={props.id} name="amount" type="number" required />
+              <button
+                className={styles.button}
+                type="submit"
+                id="btn_in"
+                name="stakeUnstake"
+                disabled={!stakeAllowed}
+              >
+                Stake
+              </button>
+              <button
+                className={styles.button}
+                type="submit"
+                id="btn_out"
+                name="stakeUnstake"
+              >
+                Unstake
+              </button>
+            </div>
           </form>
+        </div>
+      )}
+
+      {(game.gameStatus === 1) | (game.gameStatus === 2) && (
+        <div className={styles.container}>
+          <div className={styles.winnerBox}>
+            Betting closed, waiting for results
+          </div>
         </div>
       )}
 
@@ -144,7 +181,7 @@ export function Games(props) {
         <div className={styles.container}>
           <div className={styles.winnerBox}>Result {game.result}</div>
           <div className={styles.winnerBox}>Winner {game.winner}</div>
-          <button className={styles.button} type="button">
+          <button className={styles.button} type="button" onClick={claim}>
             Claim
           </button>
         </div>
@@ -153,8 +190,8 @@ export function Games(props) {
       {game.gameStatus === 4 && (
         <div className={styles.container}>
           <div className={styles.winnerBox}>Game is cancelled</div>
-          <button className={styles.button} type="button">
-            Claim
+          <button className={styles.button} type="button" onClick={withdraw}>
+            Withdraw
           </button>
         </div>
       )}
