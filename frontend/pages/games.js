@@ -113,9 +113,13 @@ export function Games(props) {
     event.target.amount.value = "";
   };
 
-  const claim = async (event) => {};
+  const claim = async (event) => {
+    console.log("Claim");
+  };
 
-  const withdraw = async (event) => {};
+  const withdraw = async (event) => {
+    console.log("Withdraw");
+  };
 
   return (
     <div className={styles.card}>
@@ -125,7 +129,8 @@ export function Games(props) {
         <p>Game {gameStatusEnum[game.gameStatus]}</p>
         <p>TVL {ethers.utils.formatEther(game.totalAmountStaked)}</p>
       </div>
-      {(game.gameStatus === 0) | (game.gameStatus === 5) && (
+
+      {(game.gameStatus === 0 || game.gameStatus === 5) && (
         <div>
           <div className={styles.border}>
             {categoryOptions.map((category) => (
@@ -145,31 +150,29 @@ export function Games(props) {
           <div className={styles.winnerBox}>{winner}</div>
           <form className={styles.form} onSubmit={enterLottery}>
             <label htmlFor="amount">Amount</label>
-            <div class="controlGroup">
-              <input id={props.id} name="amount" type="number" required />
-              <button
-                className={styles.button}
-                type="submit"
-                id="btn_in"
-                name="stakeUnstake"
-                disabled={!stakeAllowed}
-              >
-                Stake
-              </button>
-              <button
-                className={styles.button}
-                type="submit"
-                id="btn_out"
-                name="stakeUnstake"
-              >
-                Unstake
-              </button>
-            </div>
+            <input id={props.id} name="amount" type="number" required />
+            <button
+              className={styles.button}
+              type="submit"
+              id="btn_in"
+              name="stakeUnstake"
+              disabled={!stakeAllowed}
+            >
+              Stake
+            </button>
+            <button
+              className={styles.button}
+              type="submit"
+              id="btn_out"
+              name="stakeUnstake"
+            >
+              Unstake
+            </button>
           </form>
         </div>
       )}
 
-      {(game.gameStatus === 1) | (game.gameStatus === 2) && (
+      {(game.gameStatus === 1 || game.gameStatus === 2) && (
         <div className={styles.container}>
           <div className={styles.winnerBox}>
             Betting closed, waiting for results
