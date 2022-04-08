@@ -26,7 +26,7 @@ export function Games(props) {
   const [stakeAllowed, setStakeAllowed] = useState(false);
   const [winner, setWinner] = useState("");
   const categoryOptions = [game.homeTeam, "Draw", game.awayTeam];
-  const currentCategoryRef = useRef();
+  const [amount, setAmount] = useState(0);
 
   // use effect if metamask connected
   useEffect(() => {
@@ -35,7 +35,7 @@ export function Games(props) {
       getGame();
     }
 
-    if (winner.length > 1) {
+    if (winner.length > 2) {
       setStakeAllowed(true);
     }
   }, [wallet, winner, game]);
@@ -52,7 +52,10 @@ export function Games(props) {
   // get the game function
   async function getGame() {
     try {
-      const stakingContract = useContract(contractInf.address, contractInf.abi);
+      const stakingContract = await useContract(
+        contractInf.address,
+        contractInf.abi
+      );
       const gameInfo = await stakingContract.games(props.id);
       setContract(stakingContract);
       setGame({
@@ -71,10 +74,12 @@ export function Games(props) {
   }
 
   // Enter Lottery
-  const enterLottery = async (event) => {
-    event.preventDefault();
-    console.log("Button...", event.target.stakeUnstake.id);
 
+  const enterLottery = async () => {
+    console.log("Staking", amount);
+    if (amount < 1) {
+      return;
+    }
     try {
       // approve contract here and stake
       console.log("Approving...");
@@ -83,9 +88,7 @@ export function Games(props) {
       console.log("Approved. Continue...");
 
       // Enter lottery
-      const amount = ethers.utils.parseEther(
-        event.target.amount.value.toString()
-      );
+      const amount = ethers.utils.parseEther(number.toString());
       console.log("Entering lottery...", amount.toString());
       console.log("Betting on...", winner);
       const transaction = await contract.enterLottery(
@@ -97,20 +100,36 @@ export function Games(props) {
       await transaction.wait();
 
       // update TVL displayed on card and reset form
-      getGame();
-      event.target.amount.value = "";
+      resetForm();
     } catch (e) {
       console.log(e);
     }
   };
 
-  const unstake = async (event) => {
-    event.preventDefault();
-    const amount = ethers.utils.parseEther(
-      event.target.amount.value.toString()
-    );
-    console.log("Unstake", amount);
-    event.target.amount.value = "";
+  const unstake = async () => {
+    console.log("Unstaking", amount);
+
+    return;
+
+    try {
+      const transaction = await contract.updateStakeBeforeStart(
+        token.address,
+        amount
+      );
+      await transaction.wait();
+      console.log("Unstaked");
+      // update TVL displayed on card and reset form
+      setGame((prevState) => ({
+        ...prevState,
+        totalAmountStaked: gameInfo.totalAmountStaked - amount,
+      }));
+      resetForm();
+    } catch (e) {
+      console.log(e);
+    }
+
+    // update TVL displayed on card and reset form
+    resetForm();
   };
 
   const claim = async (event) => {
@@ -120,6 +139,19 @@ export function Games(props) {
   const withdraw = async (event) => {
     console.log("Withdraw");
   };
+
+  function resetForm() {
+    // update TVL displayed on card and reset form
+    document.getElementById("numb").value = "";
+    setWinner("");
+    setStakeAllowed(false);
+    getGame();
+  }
+
+  function handleChange(evt) {
+    setAmount(evt.target.value);
+    console.log("Amount", amount);
+  }
 
   return (
     <div className={styles.card}>
@@ -136,6 +168,7 @@ export function Games(props) {
             {categoryOptions.map((category) => (
               <button
                 type="button"
+                key={category}
                 className={
                   category == winner
                     ? styles.buttonGroupSelected
@@ -148,23 +181,29 @@ export function Games(props) {
             ))}
           </div>
           <div className={styles.winnerBox}>{winner}</div>
-          <form className={styles.form} onSubmit={enterLottery}>
-            <label htmlFor="amount">Amount</label>
-            <input id={props.id} name="amount" type="number" required />
+          <form className={styles.form} onChange={handleChange}>
+            Amount:
+            <input
+              type="number"
+              name="amount"
+              id="amount"
+              value={amount}
+              required
+            />
             <button
               className={styles.button}
-              type="submit"
-              id="btn_in"
-              name="stakeUnstake"
+              type="button"
+              key="stake"
+              onClick={enterLottery}
               disabled={!stakeAllowed}
             >
               Stake
             </button>
             <button
               className={styles.button}
-              type="submit"
-              id="btn_out"
-              name="stakeUnstake"
+              type="button"
+              key="unstake"
+              onClick={unstake}
             >
               Unstake
             </button>
