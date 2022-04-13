@@ -32,12 +32,12 @@ contract Lottery is Ownable {
     LOTTERY_STATE public lottery_state;
 
     enum GAME_STATE {
-        open,
-        running,
-        closed,
-        finished,
-        cancelled,
-        postponed
+        OPEN,
+        RUNNING,
+        CLOSED,
+        FINISHED,
+        CANCELLED,
+        POSTPONED
     }
 
     GAME_STATE public game_state;
@@ -107,8 +107,6 @@ contract Lottery is Ownable {
        // get fee for the team
        uint fee = getEntranceFee(amount);
        uint stakeAmount = amount - fee;
-       debeToken.safeTransferFrom( staker, 0x5a8a9CffB9d17879D0E2c0E8CE19df43B15956F1, fee);
-       debeToken.safeTransferFrom(staker, address(this), stakeAmount);
 
        // add player to the array
        playerList.push(payable(staker));
@@ -124,25 +122,50 @@ contract Lottery is Ownable {
 
        // update total value locked
        totalValueLocked += stakeAmount;
+
+       // prevent rentrancy attack by having transfer at the end
+       debeToken.safeTransferFrom( staker, 0x5a8a9CffB9d17879D0E2c0E8CE19df43B15956F1, fee);
+       debeToken.safeTransferFrom(staker, address(this), stakeAmount);
+       console.log("Staked balance is", balances[staker].stakedAmount);
+       console.log("Staked balance2 is", stakingBalance[_token][staker]);
    }
 
     // this allows player to reduce his stake or exit completely
-   function updateStakeBeforeStart(address _token) public {
+   function updateStakeBeforeStart(uint8 gameID,address _token, uint _amount) public payable{
+        console.log("Total value locked before", totalValueLocked);
         require(lottery_state == LOTTERY_STATE.OPEN);
         address staker = msg.sender;
-        uint amount = balances[staker].stakedAmount;
-        IERC20(_token).transfer(staker, amount);
+        require(balances[staker].stakedAmount >= _amount, "You try to unstake too much");
+        uint amount = _amount;
         balances[staker].stakedAmount -= amount;
+        games[gameID].totalAmountStaked -= amount;
         totalValueLocked -= amount;
+        // prevent reentrancy attack by having transaction at the end
+        debeToken.safeTransfer(staker, amount);
+        console.log("Total value locked after", totalValueLocked);
    }
 
-   function claimRewards(address _token) public {
+   function claimAll(uint8 gameID, address _token) public payable {
+       require(games[gameID].state == GAME_STATE.CANCELLED, "Game MUST be cancelled");
        address staker = msg.sender;
-       require(lottery_state == LOTTERY_STATE.CLOSED);
+       uint amount = balances[staker].stakedAmount;
+       console.log("Transfer is", amount);
+       balances[staker].stakedAmount -= amount;
+       games[gameID].totalAmountStaked -= amount;
+       totalValueLocked -= amount;
+       // prevent reentrancy attack by having transaction at the end
+       debeToken.safeTransfer(staker, amount);
+   }
+
+
+   function claimRewards(uint8 gameID,address _token) public payable{
+       address staker = msg.sender;
+       require(lottery_state == LOTTERY_STATE.CLOSED, "Lottery is not closed");
        require(balances[staker].winner == true, "You are not a winner");
        require(balances[staker].rewarded == false, "You have claimed the rewards already");
-       IERC20(_token).transfer(staker, calculatePrize());
        balances[staker].rewarded = true;
+       // prevent reentrancy attack by having transaction at the end
+       debeToken.safeTransfer(staker, calculatePrize());
    }
 
    function getEntranceFee(uint256 _betAmount) public pure returns(uint entryFee){
@@ -166,6 +189,7 @@ contract Lottery is Ownable {
 
    function closeLottery() public onlyOwner {
        lottery_state = LOTTERY_STATE.CLOSED;
+       game_state = GAME_STATE.CLOSED;
    }
 
    // this will be run every time a user will claim their reward

@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { web3 } = require("@nomiclabs/hardhat-web3");
 
-describe("Betting Contract", function () {
+describe.only("Betting Contract", function () {
   // A common pattern is to declare some variables, and assign them in the
   // `before` and `beforeEach` callbacks.
   let Lottery;
@@ -57,14 +57,13 @@ describe("Betting Contract", function () {
     });
   });
 
-  describe.only("Enter lottery", function () {
+  describe("Enter lottery", function () {
     it("Should return staker info", async function () {
       // ARRANGE
       token.transfer(addr2.address, ethers.utils.parseEther("0.5"));
       console.log("Owner is %s", owner.address);
       console.log("Addr2 is %s", addr2.address);
 
-      // ARRANGE
       await lottery.createGame(
         0,
         "Arsenal vs Barcelona",
@@ -95,13 +94,162 @@ describe("Betting Contract", function () {
       const stakedAmount = await lottery.balances(addr2.address);
 
       // Assert
-      // expect(stakedAmount.stakedAmount).to.equal(0); // there is 5% fee
       console.log("Staking %s", ethers.utils.parseEther(staking.toString()));
       console.log("Staked amount is %s", stakedAmount.stakedAmount);
-      // expect(stakedAmount.betOnThis).to.equal("ARSENAL");
       expect(stakedAmount.stakedAmount).to.equal(
         ethers.utils.parseEther(staking.toString())
       );
+    });
+  });
+
+  describe("Unstake amount", function () {
+    it("Should return new balance", async function () {
+      // ARRANGE
+      token.transfer(addr1.address, ethers.utils.parseEther("500"));
+      console.log("Owner is %s", owner.address);
+      console.log("Addr1 is %s", addr1.address);
+
+      await lottery.createGame(
+        0,
+        "Arsenal vs Barcelona",
+        "Emirates Stadium",
+        "Arsenal",
+        "Barcelona",
+        "",
+        "",
+        0,
+        0
+      );
+
+      await token
+        .connect(addr1)
+        .approve(lottery.address, ethers.utils.parseEther("1000"));
+
+      await lottery
+        .connect(addr1)
+        .enterLottery(
+          0,
+          "ARSENAL",
+          token.address,
+          ethers.utils.parseEther("500")
+        );
+
+      // ACT
+      const oldBalance = await token.balanceOf(addr1.address);
+      await lottery
+        .connect(addr1)
+        .updateStakeBeforeStart(
+          0,
+          token.address,
+          ethers.utils.parseEther("100")
+        );
+      const newBalance = await token.balanceOf(addr1.address);
+
+      // ASSERT
+      const staking = 375;
+      const stakedAmount = await lottery.balances(addr1.address);
+      console.log("Staking %s", ethers.utils.parseEther(staking.toString()));
+      console.log("Staked amount is %s", stakedAmount.stakedAmount);
+      console.log("Wallet Balance old %s", oldBalance);
+      console.log("Wallet Balance new is %s", newBalance);
+      expect(stakedAmount.stakedAmount).to.equal(
+        ethers.utils.parseEther(staking.toString())
+      );
+    });
+  });
+
+  describe("Unstake amount higher than staked", function () {
+    it("Should revert with error", async function () {
+      // ARRANGE
+      token.transfer(addr1.address, ethers.utils.parseEther("500"));
+
+      await lottery.createGame(
+        0,
+        "Arsenal vs Barcelona",
+        "Emirates Stadium",
+        "Arsenal",
+        "Barcelona",
+        "",
+        "",
+        0,
+        0
+      );
+
+      await token
+        .connect(addr1)
+        .approve(lottery.address, ethers.utils.parseEther("1000"));
+
+      await lottery
+        .connect(addr1)
+        .enterLottery(
+          0,
+          "ARSENAL",
+          token.address,
+          ethers.utils.parseEther("50")
+        );
+
+      // ACT
+      console.log("This should revert with error");
+
+      // ASSERT
+      const stakedAmount = await lottery.balances(addr1.address);
+      console.log("Staked amount is %s", stakedAmount.stakedAmount);
+      await expect(
+        lottery
+          .connect(addr1)
+          .updateStakeBeforeStart(
+            0,
+            token.address,
+            ethers.utils.parseEther("55")
+          )
+      ).to.be.revertedWith("You try to unstake too much");
+    });
+  });
+
+  describe("Unstake/Claim All", function () {
+    it("Should unstake total amount of tokens", async function () {
+      // ARRANGE
+      token.transfer(addr1.address, ethers.utils.parseEther("1500"));
+
+      await lottery.createGame(
+        0,
+        "Arsenal vs Barcelona",
+        "Emirates Stadium",
+        "Arsenal",
+        "Barcelona",
+        "",
+        "",
+        0,
+        0
+      );
+
+      await token
+        .connect(addr1)
+        .approve(lottery.address, ethers.utils.parseEther("1000"));
+
+      await lottery
+        .connect(addr1)
+        .enterLottery(
+          0,
+          "ARSENAL",
+          token.address,
+          ethers.utils.parseEther("1000")
+        );
+
+      // ACT
+      const oldBalance = await token.balanceOf(addr1.address);
+      const stakedAmountBefore = await lottery.balances(addr1.address);
+      await lottery.connect(owner).updateGame(0, "Arsenal", "2:1", 4);
+      await lottery.connect(addr1).claimAll(0, token.address);
+      const stakedAmountAfter = await lottery.balances(addr1.address);
+      const newBalance = await token.balanceOf(addr1.address);
+
+      // ASSERT
+      console.log("Staked amount before %s", stakedAmountBefore.stakedAmount);
+      console.log("Staked amount after %s", stakedAmountAfter.stakedAmount);
+      console.log("Balance amount before %s", oldBalance);
+      console.log("Balance amount after %s", newBalance);
+      expect(stakedAmountAfter.stakedAmount).to.equal(0);
     });
   });
 });

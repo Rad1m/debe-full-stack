@@ -33,7 +33,7 @@ async function main() {
     "Burnley",
     "2:3",
     1,
-    ethers.utils.parseEther("5")
+    ethers.utils.parseEther("5000")
   );
 
   await tx1.wait();
@@ -47,7 +47,7 @@ async function main() {
     "",
     "",
     2,
-    ethers.utils.parseEther("15")
+    ethers.utils.parseEther("1500")
   );
 
   await tx2.wait();
@@ -61,7 +61,7 @@ async function main() {
     "Everton",
     "2:3",
     3,
-    ethers.utils.parseEther("15")
+    ethers.utils.parseEther("4500")
   );
 
   await tx3.wait();
@@ -75,7 +75,7 @@ async function main() {
     "",
     "",
     4,
-    ethers.utils.parseEther("15")
+    ethers.utils.parseEther("9500")
   );
 
   await tx4.wait();
@@ -89,7 +89,7 @@ async function main() {
     "",
     "",
     5,
-    ethers.utils.parseEther("15")
+    ethers.utils.parseEther("10000")
   );
 
   await tx5.wait();

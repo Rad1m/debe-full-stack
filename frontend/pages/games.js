@@ -76,7 +76,7 @@ export function Games(props) {
   // Enter Lottery
 
   const enterLottery = async () => {
-    console.log("Staking", amount);
+    console.log("Staking", amount.toString());
     if (amount < 1) {
       return;
     }
@@ -88,7 +88,6 @@ export function Games(props) {
       console.log("Approved. Continue...");
 
       // Enter lottery
-      const amount = ethers.utils.parseEther(number.toString());
       console.log("Entering lottery...", amount.toString());
       console.log("Betting on...", winner);
       const transaction = await contract.enterLottery(
@@ -97,7 +96,9 @@ export function Games(props) {
         token.address,
         amount
       );
+      console.log("Awaiting transaction...");
       await transaction.wait();
+      console.log("Transaction finished");
 
       // update TVL displayed on card and reset form
       resetForm();
@@ -107,29 +108,23 @@ export function Games(props) {
   };
 
   const unstake = async () => {
-    console.log("Unstaking", amount);
-
-    return;
+    console.log("Unstaking", amount.toString());
 
     try {
       const transaction = await contract.updateStakeBeforeStart(
+        props.id,
         token.address,
         amount
       );
+      console.log("Awaiting transaction");
       await transaction.wait();
-      console.log("Unstaked");
+      console.log("Unstaked", amount.toString());
       // update TVL displayed on card and reset form
-      setGame((prevState) => ({
-        ...prevState,
-        totalAmountStaked: gameInfo.totalAmountStaked - amount,
-      }));
       resetForm();
+      console.log("TVL", game.totalAmountStaked.toString())
     } catch (e) {
       console.log(e);
     }
-
-    // update TVL displayed on card and reset form
-    resetForm();
   };
 
   const claim = async (event) => {
@@ -142,15 +137,15 @@ export function Games(props) {
 
   function resetForm() {
     // update TVL displayed on card and reset form
-    document.getElementById("numb").value = "";
+    setAmount(0);
     setWinner("");
     setStakeAllowed(false);
     getGame();
   }
 
   function handleChange(evt) {
-    setAmount(evt.target.value);
-    console.log("Amount", amount);
+    setAmount(ethers.utils.parseEther(evt.target.value.toString()));
+    console.log("Amount", amount.toString());
   }
 
   return (
@@ -187,7 +182,7 @@ export function Games(props) {
               type="number"
               name="amount"
               id="amount"
-              value={amount}
+              defaultValue={amount}
               required
             />
             <button
