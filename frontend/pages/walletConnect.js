@@ -6,6 +6,7 @@ import tokenAddress from "../src/artifacts/Token-address.json";
 import tokenAbi from "../src/artifacts/Token-info.json";
 import contractAddress from "../src/artifacts/Lottery-address.json";
 import contractAbi from "../src/artifacts/Lottery-info.json";
+import styles from "../styles/Home.module.css";
 
 export function WalletButton() {
   const [hasMetamask, setHasMetamask] = useState();
@@ -19,9 +20,11 @@ export function WalletButton() {
       setHasMetamask(true);
       connect();
     }
-  }, []);
+  }, [hasMetamask]);
 
   async function connect() {
+    console.log("Connecting wallet");
+
     try {
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
@@ -56,6 +59,8 @@ export function WalletButton() {
         address: contractAddress.Contract,
         abi: contractAbi.abi,
       }));
+
+      console.log("Wallet connected");
     } catch (e) {
       console.log(e);
     }
@@ -63,7 +68,7 @@ export function WalletButton() {
 
   return (
     <div>
-      <button onClick={connect}>
+      <button className={styles.button} onClick={connect}>
         {wallet.address ? <p>{wallet.address}</p> : <h3>Connect</h3>}
       </button>
     </div>
