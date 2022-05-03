@@ -43,6 +43,7 @@ contract Lottery is Ownable {
     GAME_STATE public game_state;
 
     struct GameStruct {
+        uint gameId;
         string gameName;
         string stadium;
         string homeTeam;
@@ -54,6 +55,7 @@ contract Lottery is Ownable {
     }
 
     struct PlayersStruct {
+        uint8 gameId;
         uint stakedAmount;
         string betOnTeam;
         bool winner;
@@ -72,30 +74,31 @@ contract Lottery is Ownable {
     
     // to save on contract cost, all games will be in one contract
     // this function creates a game
-    function createGame(uint8 gameID, string memory _gameName, string memory _stadium, string memory _homeTeam, string memory _awayTeam, string memory _winner,string memory _result, GAME_STATE _state, uint _amount )  public payable onlyOwner {
-        games[gameID].gameName = _gameName;
-        games[gameID].stadium = _stadium;
-        games[gameID].homeTeam = _homeTeam;
-        games[gameID].awayTeam = _awayTeam;
-        games[gameID].winner = _winner;
-        games[gameID].result = _result;
-        games[gameID].state = _state;
-        games[gameID].totalAmountStaked += _amount;
+    function createGame(uint8 _gameID, string memory _gameName, string memory _stadium, string memory _homeTeam, string memory _awayTeam, string memory _winner,string memory _result, GAME_STATE _state, uint _amount )  public payable onlyOwner {
+        games[_gameID].gameId = _gameID;
+        games[_gameID].gameName = _gameName;
+        games[_gameID].stadium = _stadium;
+        games[_gameID].homeTeam = _homeTeam;
+        games[_gameID].awayTeam = _awayTeam;
+        games[_gameID].winner = _winner;
+        games[_gameID].result = _result;
+        games[_gameID].state = _state;
+        games[_gameID].totalAmountStaked += _amount;
     }
 
-    function getGameStatus(uint8 gameID) public view returns(GAME_STATE state, uint amount){
-        return (games[gameID].state, games[gameID].totalAmountStaked);
+    function getGameStatus(uint8 _gameID) public view returns(GAME_STATE state, uint amount){
+        return (games[_gameID].state, games[_gameID].totalAmountStaked);
     }
 
-    function updateGame(uint8 gameID, string memory _winner,string memory _result, GAME_STATE _state) public onlyOwner {
-        games[gameID].winner = _winner;
-        games[gameID].result = _result;
-        games[gameID].state = _state;
+    function updateGame(uint8 _gameID, string memory _winner,string memory _result, GAME_STATE _state) public onlyOwner {
+        games[_gameID].winner = _winner;
+        games[_gameID].result = _result;
+        games[_gameID].state = _state;
     }
 
    // staking tokens means entering the lottery, user can unstake their tokens for as long as the match has not started yet
    // I know the token address because it is my token
-   function enterLottery(uint8 gameID, string memory _betOnTeam, address _token, uint _amount) public payable {
+   function enterLottery(uint8 _gameID, string memory _betOnTeam, address _token, uint _amount) public payable {
        require(lottery_state == LOTTERY_STATE.OPEN);
        require(_amount > 0, "Amount must be more than 0");
        // require(tokenIsAllowed(_token), "Token is currently not allowed");
@@ -113,12 +116,13 @@ contract Lottery is Ownable {
        stakingBalance[_token][staker] = stakingBalance[_token][staker] + stakeAmount;
 
        // add player to the struct
+       balances[staker].gameId = _gameID;
        balances[staker].stakedAmount += stakeAmount;
        balances[staker].betOnTeam = _betOnTeam;
        balances[staker].blockNumber = block.number;
        balances[staker].winner = false;
        balances[staker].rewarded = false;
-       games[gameID].totalAmountStaked += stakeAmount;
+       games[_gameID].totalAmountStaked += stakeAmount;
 
        // update total value locked
        totalValueLocked += stakeAmount;

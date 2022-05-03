@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { web3 } = require("@nomiclabs/hardhat-web3");
 
-describe.only("Betting Contract", function () {
+describe("Betting Contract", function () {
   // A common pattern is to declare some variables, and assign them in the
   // `before` and `beforeEach` callbacks.
   let Lottery;
@@ -102,7 +102,7 @@ describe.only("Betting Contract", function () {
     });
   });
 
-  describe("Unstake amount", function () {
+  describe.only("Unstake amount", function () {
     it("Should return new balance", async function () {
       // ARRANGE
       token.transfer(addr1.address, ethers.utils.parseEther("500"));

@@ -1,74 +1,23 @@
 .container {
   position: relative;
-}
-
-.main {
-  min-height: 100vh;
-  padding: 4rem 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.footer {
-  display: flex;
-  flex: 1;
-  padding: 2rem 0;
-  border-top: 1px solid #eaeaea;
-  justify-content: center;
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+  justify-content: space-around;
   align-items: center;
-}
-
-.footer a {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
-}
-
-.title a {
-  color: #ffffff;
-  text-decoration: none;
-}
-
-.title a:hover,
-.title a:focus,
-.title a:active {
-  text-decoration: underline;
-}
-
-.title {
-  margin: 0;
-  line-height: 1.15;
-  font-size: 4rem;
-}
-
-.title,
-.description {
-  text-align: center;
-}
-
-.description {
-  margin: 4rem 0;
-  line-height: 1.5;
-  font-size: 1.5rem;
-}
-
-.code {
-  background: #fafafa;
-  border-radius: 5px;
-  padding: 0.75rem;
-  font-size: 1.1rem;
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
+  border-bottom: solid 1px;
+  height: 4rem;
 }
 
 .grid {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   min-width: 800px;
 }
 
@@ -80,6 +29,14 @@
   border-radius: 5px;
   width: 300px;
   height: 330px;
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
+}
+
+.card .btnholder {
+  justify-content: center;
+  display: flex;
 }
 
 .card:hover {
@@ -88,22 +45,27 @@
 
 .card h2 {
   margin: 0 0 0 0;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   text-align: center;
 }
 
 .card p {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1rem;
   line-height: 1.5;
   text-align: center;
 }
 
 .logo {
-  height: 1em;
-  margin-left: 0.5rem;
+  padding: 3vh 3vw;
+  text-align: left;
+  width: 20vw;
 }
 
+.logo img {
+  height: auto;
+  width: 4rem;
+}
 .button {
   margin: 3px;
   color: whitesmoke;
@@ -118,8 +80,8 @@
 
 .button:hover {
   color: white;
-  background-color: rgb(255, 104, 104);
-  font-weight: bold;
+  background-color: #dd5f24;
+  transition: all ease-in-out 250ms;
 }
 
 .button:disabled {
@@ -139,8 +101,9 @@
 }
 
 .buttonGroup:hover {
-  color: red;
-  font-weight: bold;
+  color: rgb(56, 56, 56);
+  background-color: #bbffae;
+  transition: all ease-in-out 350ms;
 }
 .buttonGroup:focus,
 .buttonGroup:active {
@@ -149,13 +112,41 @@
 }
 
 .buttonGroupSelected {
-  color: white;
-  background-color: rgb(255, 86, 86);
+  color: rgb(56, 56, 56);
+  background-color: rgb(152, 255, 93);
   border-radius: 0px;
   border: 0px;
   min-width: 80px;
   min-height: 30px;
   font-weight: bold;
+}
+
+.loginbutton {
+  margin-left: auto;
+  margin-right: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  cursor: pointer;
+  color: whitesmoke;
+  background-color: #425b80;
+  border-color: transparent;
+  border-radius: 5px;
+  border-width: 0;
+  min-width: 80px;
+  min-height: 30px;
+  max-height: 2.8rem;
+  position: relative;
+  float: right;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.loginbutton:hover {
+  color: #fff;
+  background-color: #dd5f24;
+  transition: all ease-in-out 200ms;
 }
 
 .polaroid {
@@ -180,13 +171,26 @@
   text-align: center;
   justify-content: center;
   border-radius: 3px;
+  color: #bbffae;
   background-color: rgb(22, 54, 70);
   min-height: 30px;
-  font-size: 20px;
+  font-size: 1rem;
+}
+
+.infoBox {
+  margin: 3px;
+  padding: 5px;
+  text-align: center;
+  justify-content: center;
+  border-radius: 3px;
+  color: #bbffae;
+  background-color: rgb(22, 54, 70);
+  min-height: 110px;
+  font-size: 1rem;
 }
 
 .form {
-  margin: 3px;
+  margin: 10px;
   padding: 5px;
   text-align: center;
   justify-content: center;
@@ -196,6 +200,13 @@
 .form input {
   color: whitesmoke;
   background-color: rgb(22, 54, 70);
+  font-size: 1rem;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  height: 2rem;
+  margin: 5px;
+  padding: 5px;
+  text-align: center;
 }
 
 @media (max-width: 600px) {

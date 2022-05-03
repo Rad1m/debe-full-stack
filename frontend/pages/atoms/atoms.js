@@ -3,6 +3,7 @@ import { atom, atomFamily } from "recoil";
 export const gameInfo = atomFamily({
   key: "gameInfo",
   default: {
+    gameId: 0,
     gameName: "",
     stadium: "",
     homeTeam: "",

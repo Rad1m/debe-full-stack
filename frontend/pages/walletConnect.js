@@ -7,6 +7,7 @@ import tokenAbi from "../src/artifacts/Token-info.json";
 import contractAddress from "../src/artifacts/Lottery-address.json";
 import contractAbi from "../src/artifacts/Lottery-info.json";
 import styles from "../styles/Home.module.css";
+import { ellipseAddress } from "../pages/hooks/utilities.js";
 
 export function WalletButton() {
   const [hasMetamask, setHasMetamask] = useState();
@@ -68,8 +69,12 @@ export function WalletButton() {
 
   return (
     <div>
-      <button className={styles.button} onClick={connect}>
-        {wallet.address ? <p>{wallet.address}</p> : <h3>Connect</h3>}
+      <button className={styles.loginbutton} onClick={connect}>
+        {wallet.address ? (
+          <p>{ellipseAddress(wallet.address, 8)}</p>
+        ) : (
+          <h3>Connect</h3>
+        )}
       </button>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ethers } from "ethers";
 import { contractInfo, gameInfo, tokenInfo, walletInfo } from "./atoms/atoms";
@@ -17,7 +17,7 @@ export function Games(props) {
   ];
   Object.freeze(gameStatusEnum);
 
-  const wallet = useRecoilValue(walletInfo);
+  const [wallet, setWallet] = useRecoilState(walletInfo);
   const contractInf = useRecoilValue(contractInfo);
   const tokentInf = useRecoilValue(tokenInfo);
   const [game, setGame] = useRecoilState(gameInfo(props.id));
@@ -27,6 +27,7 @@ export function Games(props) {
   const [winner, setWinner] = useState("");
   const categoryOptions = [game.homeTeam, "Draw", game.awayTeam];
   const [amount, setAmount] = useState(0);
+  const [staked, setStaked] = useState();
 
   // use effect if metamask connected
   useEffect(() => {
@@ -38,7 +39,7 @@ export function Games(props) {
     if (winner.length > 2) {
       setStakeAllowed(true);
     }
-  }, [wallet, winner, game]);
+  }, [wallet, winner]);
 
   async function getToken() {
     try {
@@ -57,8 +58,11 @@ export function Games(props) {
         contractInf.abi
       );
       const gameInfo = await stakingContract.games(props.id);
+      const balances = await stakingContract.balances(wallet.address);
+      setStaked(ethers.utils.formatEther(balances.stakedAmount));
       setContract(stakingContract);
       setGame({
+        gameId: gameInfo.gameId,
         gameName: gameInfo.gameName,
         stadium: gameInfo.stadium,
         homeTeam: gameInfo.homeTeam,
@@ -89,18 +93,24 @@ export function Games(props) {
       console.log("Approved. Continue...");
 
       // Enter lottery
-      const amount = ethers.utils.parseEther(number.toString());
-      console.log("Entering lottery...", amount.toString());
+      const amountToStake = ethers.utils.parseEther(amount.toString());
+      console.log("Entering lottery...", amountToStake.toString());
       console.log("Betting on...", winner);
       const transaction = await contract.enterLottery(
         props.id,
         winner,
         token.address,
-        amount
+        amountToStake
       );
       await transaction.wait();
 
       // update TVL displayed on card and reset form
+      const walletBalance = Number(wallet.balance);
+      setWallet((prevState) => ({
+        ...prevState,
+        balance:
+          walletBalance - Number(ethers.utils.formatEther(amountToStake)),
+      }));
       resetForm();
     } catch (e) {
       console.log(e);
@@ -108,30 +118,30 @@ export function Games(props) {
   };
 
   const unstake = async () => {
-    console.log("Unstaking", amount);
     if (amount < 1) {
       return;
     }
+    console.log("Unstaking", amount);
+    const amountToUnstake = ethers.utils.parseEther(amount.toString());
 
     try {
       const transaction = await contract.updateStakeBeforeStart(
+        props.id,
         token.address,
-        amount
+        amountToUnstake
       );
       await transaction.wait();
       console.log("Unstaked");
-      // update TVL displayed on card and reset form
-      setGame((prevState) => ({
+      const walletBalance = Number(wallet.balance);
+      setWallet((prevState) => ({
         ...prevState,
-        totalAmountStaked: gameInfo.totalAmountStaked - amount,
+        balance:
+          walletBalance + Number(ethers.utils.formatEther(amountToUnstake)),
       }));
       resetForm();
     } catch (e) {
       console.log(e);
     }
-
-    // update TVL displayed on card and reset form
-    resetForm();
   };
 
   const claim = async (event) => {
@@ -144,28 +154,31 @@ export function Games(props) {
 
   function resetForm() {
     // update TVL displayed on card and reset form
-    document.getElementById("numb").value = "";
     setWinner("");
     setStakeAllowed(false);
+    setAmount(0);
     getGame();
   }
 
   function handleChange(evt) {
-    setAmount(evt.target.value);
+    const num = Number(evt.target.value);
+    setAmount(num);
     console.log("Amount", amount);
   }
 
   return (
     <div className={styles.card}>
-      <div className={styles.container}>
-        <h2>{game.gameName}</h2>
-        <p>Location {game.stadium}</p>
-        <p>Game {gameStatusEnum[game.gameStatus]}</p>
-        <p>TVL {ethers.utils.formatEther(game.totalAmountStaked)}</p>
-      </div>
+      <h2>{game.gameName}</h2>
+      <p>Playing at {game.stadium}</p>
+      <p>Game is {gameStatusEnum[game.gameStatus]}</p>
+      <p>
+        Pool stake {Number(ethers.utils.formatEther(game.totalAmountStaked))}{" "}
+        DEBE
+      </p>
+      <p>Your stake {Number(staked)} DEBE</p>
 
       {(game.gameStatus === 0 || game.gameStatus === 5) && (
-        <div>
+        <div className={styles.container}>
           <div className={styles.border}>
             {categoryOptions.map((category) => (
               <button
@@ -182,16 +195,18 @@ export function Games(props) {
               </button>
             ))}
           </div>
-          <div className={styles.winnerBox}>{winner}</div>
-          <form className={styles.form} onChange={handleChange}>
+          <form className={styles.form}>
             Amount:
             <input
+              onChange={handleChange}
               type="number"
               name="amount"
               id="amount"
               value={amount}
               required
             />
+          </form>
+          <div className={styles.btnholder}>
             <button
               className={styles.button}
               type="button"
@@ -209,14 +224,20 @@ export function Games(props) {
             >
               Unstake
             </button>
-          </form>
+          </div>
         </div>
       )}
 
       {(game.gameStatus === 1 || game.gameStatus === 2) && (
         <div className={styles.container}>
-          <div className={styles.winnerBox}>
-            Betting closed, waiting for results
+          <div className={styles.infoBox}>
+            <p>Betting is closed... waiting for results.</p>
+            <p>You can claim after results are posted on the blockchain.</p>
+          </div>
+          <div className={styles.btnholder}>
+            <button className={styles.button} type="button" disabled={true}>
+              Waiting...
+            </button>
           </div>
         </div>
       )}
@@ -225,18 +246,24 @@ export function Games(props) {
         <div className={styles.container}>
           <div className={styles.winnerBox}>Result {game.result}</div>
           <div className={styles.winnerBox}>Winner {game.winner}</div>
-          <button className={styles.button} type="button" onClick={claim}>
-            Claim
-          </button>
+          <div className={styles.btnholder}>
+            <button className={styles.button} type="button" onClick={claim}>
+              Claim
+            </button>
+          </div>
         </div>
       )}
 
       {game.gameStatus === 4 && (
         <div className={styles.container}>
-          <div className={styles.winnerBox}>Game is cancelled</div>
-          <button className={styles.button} type="button" onClick={withdraw}>
-            Withdraw
-          </button>
+          <div className={styles.infoBox}>
+            Game was cancelled. You can withdraw your staked amount.
+          </div>
+          <div className={styles.btnholder}>
+            <button className={styles.button} type="button" onClick={withdraw}>
+              Withdraw
+            </button>
+          </div>
         </div>
       )}
     </div>

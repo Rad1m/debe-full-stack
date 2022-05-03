@@ -1,13 +1,12 @@
 import React from "react";
-import { Stake } from "./stake";
-import { WalletButton } from "./walletConnect";
+import Topbar from "./topbar";
 import Canvas from "./canvas";
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
   return (
-    <div>
-      <h1>Connect wallet</h1>
-      <WalletButton />
+    <div className={styles.container}>
+      <Topbar />
       <Canvas />
     </div>
   );
