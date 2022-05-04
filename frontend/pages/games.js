@@ -58,7 +58,7 @@ export function Games(props) {
         contractInf.abi
       );
       const gameInfo = await stakingContract.games(props.id);
-      const balances = await stakingContract.balances(wallet.address);
+      const balances = await stakingContract.balances(props.id, wallet.address);
       setStaked(ethers.utils.formatEther(balances.stakedAmount));
       setContract(stakingContract);
       setGame({
