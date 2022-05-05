@@ -48,7 +48,7 @@ task("faucet", "Sends ETH and tokens to an address")
       sender.address
     );
 
-    const amount = ethers.utils.parseEther("1000");
+    const amount = ethers.utils.parseEther("1000000");
     const tx = await token.transfer(receiver, amount);
     await tx.wait();
 

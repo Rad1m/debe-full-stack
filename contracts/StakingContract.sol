@@ -43,7 +43,7 @@ contract Lottery is Ownable {
     GAME_STATE public game_state;
 
     struct GameStruct {
-        uint gameId;
+        uint256 gameId;
         string gameName;
         string stadium;
         string homeTeam;
@@ -51,21 +51,22 @@ contract Lottery is Ownable {
         string winner;
         string result;
         GAME_STATE state;
-        uint totalAmountStaked;
+        uint256 totalAmountStaked;
     }
 
     struct PlayersStruct {
-        uint8 gameId;
-        uint stakedAmount;
+        uint256 gameId;
+        uint256 stakedAmount;
         string betOnTeam;
         bool winner;
         bool rewarded;
-        uint blockNumber;
+        uint256 blockNumber;
     }
     // mapping players to know stake amount and what they bet on
     mapping(address => mapping(address => uint)) public stakingBalance; // test if this is really needed
-    mapping(address => PlayersStruct) public balances;
-    mapping(uint8 => GameStruct) public games;
+    // mapping(address => PlayersStruct) public balances;
+    mapping (uint256 => mapping (address => PlayersStruct)) public balances;
+    mapping(uint256 => GameStruct) public games;
     
     address payable[] public playerList; // list of all players
     address payable[] public winnerList; // list of winners
@@ -74,7 +75,7 @@ contract Lottery is Ownable {
     
     // to save on contract cost, all games will be in one contract
     // this function creates a game
-    function createGame(uint8 _gameID, string memory _gameName, string memory _stadium, string memory _homeTeam, string memory _awayTeam, string memory _winner,string memory _result, GAME_STATE _state, uint _amount )  public payable onlyOwner {
+    function createGame(uint256 _gameID, string memory _gameName, string memory _stadium, string memory _homeTeam, string memory _awayTeam, string memory _winner,string memory _result, GAME_STATE _state, uint256 _amount )  public payable onlyOwner {
         games[_gameID].gameId = _gameID;
         games[_gameID].gameName = _gameName;
         games[_gameID].stadium = _stadium;
@@ -86,11 +87,11 @@ contract Lottery is Ownable {
         games[_gameID].totalAmountStaked += _amount;
     }
 
-    function getGameStatus(uint8 _gameID) public view returns(GAME_STATE state, uint amount){
+    function getGameStatus(uint256 _gameID) public view returns(GAME_STATE state, uint256 amount){
         return (games[_gameID].state, games[_gameID].totalAmountStaked);
     }
 
-    function updateGame(uint8 _gameID, string memory _winner,string memory _result, GAME_STATE _state) public onlyOwner {
+    function updateGame(uint256 _gameID, string memory _winner,string memory _result, GAME_STATE _state) public onlyOwner {
         games[_gameID].winner = _winner;
         games[_gameID].result = _result;
         games[_gameID].state = _state;
@@ -98,30 +99,30 @@ contract Lottery is Ownable {
 
    // staking tokens means entering the lottery, user can unstake their tokens for as long as the match has not started yet
    // I know the token address because it is my token
-   function enterLottery(uint8 _gameID, string memory _betOnTeam, address _token, uint _amount) public payable {
+   function enterLottery(uint256 _gameID, string memory _betOnTeam, address _token, uint256 _amount) public payable {
        require(lottery_state == LOTTERY_STATE.OPEN);
        require(_amount > 0, "Amount must be more than 0");
        // require(tokenIsAllowed(_token), "Token is currently not allowed");
        require(bytes(_betOnTeam).length >= 1, "No winner has been selected");
 
        address staker = msg.sender;
-       uint amount = _amount;
+       uint256 amount = _amount;
 
        // get fee for the team
-       uint fee = getEntranceFee(amount);
-       uint stakeAmount = amount - fee;
+       uint256 fee = getEntranceFee(amount);
+       uint256 stakeAmount = amount - fee;
 
        // add player to the array
        playerList.push(payable(staker));
        stakingBalance[_token][staker] = stakingBalance[_token][staker] + stakeAmount;
 
        // add player to the struct
-       balances[staker].gameId = _gameID;
-       balances[staker].stakedAmount += stakeAmount;
-       balances[staker].betOnTeam = _betOnTeam;
-       balances[staker].blockNumber = block.number;
-       balances[staker].winner = false;
-       balances[staker].rewarded = false;
+       balances[_gameID][staker].gameId = _gameID;
+       balances[_gameID][staker].stakedAmount += stakeAmount;
+       balances[_gameID][staker].betOnTeam = _betOnTeam;
+       balances[_gameID][staker].blockNumber = block.number;
+       balances[_gameID][staker].winner = false;
+       balances[_gameID][staker].rewarded = false;
        games[_gameID].totalAmountStaked += stakeAmount;
 
        // update total value locked
@@ -130,51 +131,51 @@ contract Lottery is Ownable {
        // prevent rentrancy attack by having transfer at the end
        debeToken.safeTransferFrom( staker, 0x5a8a9CffB9d17879D0E2c0E8CE19df43B15956F1, fee);
        debeToken.safeTransferFrom(staker, address(this), stakeAmount);
-       console.log("Staked balance is", balances[staker].stakedAmount);
-       console.log("Staked balance2 is", stakingBalance[_token][staker]);
+       console.log("Staked balance for game %s is %s", _gameID, balances[_gameID][staker].stakedAmount);
+       console.log("Staked balance2 for game %s is %s", _gameID, stakingBalance[_token][staker]); // this may not be needed
    }
 
     // this allows player to reduce his stake or exit completely
-   function updateStakeBeforeStart(uint8 gameID,address _token, uint _amount) public payable{
+   function updateStakeBeforeStart(uint256 _gameID, uint256 _amount) public payable{
         console.log("Total value locked before", totalValueLocked);
         require(lottery_state == LOTTERY_STATE.OPEN);
         address staker = msg.sender;
-        require(balances[staker].stakedAmount >= _amount, "You try to unstake too much");
-        uint amount = _amount;
-        balances[staker].stakedAmount -= amount;
-        games[gameID].totalAmountStaked -= amount;
+        require(balances[_gameID][staker].stakedAmount >= _amount, "You try to unstake too much");
+        uint256 amount = _amount;
+        balances[_gameID][staker].stakedAmount -= amount;
+        games[_gameID].totalAmountStaked -= amount;
         totalValueLocked -= amount;
         // prevent reentrancy attack by having transaction at the end
         debeToken.safeTransfer(staker, amount);
         console.log("Total value locked after", totalValueLocked);
    }
 
-   function claimAll(uint8 gameID, address _token) public payable {
-       require(games[gameID].state == GAME_STATE.CANCELLED, "Game MUST be cancelled");
+   function claimAll(uint256 _gameID) public payable {
+       require(games[_gameID].state == GAME_STATE.CANCELLED, "Game MUST be cancelled");
        address staker = msg.sender;
-       uint amount = balances[staker].stakedAmount;
+       uint256 amount = balances[_gameID][staker].stakedAmount;
        console.log("Transfer is", amount);
-       balances[staker].stakedAmount -= amount;
-       games[gameID].totalAmountStaked -= amount;
+       balances[_gameID][staker].stakedAmount -= amount;
+       games[_gameID].totalAmountStaked -= amount;
        totalValueLocked -= amount;
        // prevent reentrancy attack by having transaction at the end
        debeToken.safeTransfer(staker, amount);
    }
 
 
-   function claimRewards(uint8 gameID,address _token) public payable{
+   function claimRewards(uint256 _gameID) public payable{
        address staker = msg.sender;
        require(lottery_state == LOTTERY_STATE.CLOSED, "Lottery is not closed");
-       require(balances[staker].winner == true, "You are not a winner");
-       require(balances[staker].rewarded == false, "You have claimed the rewards already");
-       balances[staker].rewarded = true;
+       require(balances[_gameID][staker].winner == true, "You are not a winner");
+       require(balances[_gameID][staker].rewarded == false, "You have claimed the rewards already");
+       balances[_gameID][staker].rewarded = true;
        // prevent reentrancy attack by having transaction at the end
-       debeToken.safeTransfer(staker, calculatePrize());
+       debeToken.safeTransfer(staker, calculatePrize(_gameID));
    }
 
-   function getEntranceFee(uint256 _betAmount) public pure returns(uint entryFee){
+   function getEntranceFee(uint256 _betAmount) public pure returns(uint256 entryFee){
        // do some rules to enter here
-       uint minimumBet = 50;
+       uint256 minimumBet = 50;
        require(_betAmount >= minimumBet, "Minimum bet not reached");
        return entryFee = _betAmount * 5 / 100; // 5%
    }
@@ -197,7 +198,7 @@ contract Lottery is Ownable {
    }
 
    // this will be run every time a user will claim their reward
-   function calculatePrize() public view returns(uint256 winAmount){
+   function calculatePrize(uint256 _gameID) public view returns(uint256 winAmount){
        // get player's address
        address staker = msg.sender;
 
@@ -209,9 +210,9 @@ contract Lottery is Ownable {
            winAmount = totalValueLocked; // only one winner ==> gets entire pool
        } else if (winnerList.length > 1){
            // players with higher bets will get higher (weighted) rewards
-           uint weight = balances[staker].stakedAmount * 10000 /winPool;
+           uint256 weight = balances[_gameID][staker].stakedAmount * 10000 /winPool;
            winAmount = ((totalValueLocked - winPool) * weight)/10000;
-           winAmount = winAmount + balances[staker].stakedAmount;
+           winAmount = winAmount + balances[_gameID][staker].stakedAmount;
        }
        else {
            // if nobody has won, then there is no rewards
@@ -221,36 +222,36 @@ contract Lottery is Ownable {
    }
 
     // get how much money user staked
-    function getUserTVL(address _user) public view returns(uint){
-        uint totalValue = 0;
-        totalValue = balances[_user].stakedAmount;
+    function getUserTVL(uint256 _gameID,address _user) public view returns(uint){
+        uint256 totalValue = 0;
+        totalValue = balances[_gameID][_user].stakedAmount;
         return totalValue;
     }
 
     // check how many winners we have
     // winners wil split the prize among themnselves
-   function getWinners(string memory _result) public onlyOwner {
+   function getWinners(uint256 _gameID, string memory _result) public onlyOwner {
        // iterate through players and add winners to array
        // this is gas expensive
        require(lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "Lottery needs to finish first");
-       for (uint i=0; i<playerList.length; i++) {
+       for (uint256 i=0; i<playerList.length; i++) {
 
            // compare strings
-           if(keccak256(abi.encodePacked(balances[playerList[i]].betOnTeam)) == keccak256(abi.encodePacked(_result)))
+           if(keccak256(abi.encodePacked(balances[_gameID][playerList[i]].betOnTeam)) == keccak256(abi.encodePacked(_result)))
            {
-               balances[playerList[i]].winner = true;
+               balances[_gameID][playerList[i]].winner = true;
                winnerList.push(payable(playerList[i]));
            } else {
-               balances[playerList[i]].winner = false;
+               balances[_gameID][playerList[i]].winner = false;
            }
         }
-        getWinPool(); // get much staked there is among winners
+        getWinPool(_gameID); // get much staked there is among winners
    }
 
-   function getWinPool () public onlyOwner {
+   function getWinPool (uint256 _gameID) public onlyOwner {
        require(lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "Lottery needs to finish first");
-       for (uint i=0; i<winnerList.length; i++) {
-            winPool += balances[winnerList[i]].stakedAmount;
+       for (uint256 i=0; i<winnerList.length; i++) {
+            winPool += balances[_gameID][winnerList[i]].stakedAmount;
         }
         closeLottery(); // close lottery, rewards can be paid out
    }

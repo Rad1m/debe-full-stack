@@ -60,7 +60,7 @@ describe("Betting Contract", function () {
   describe("Enter lottery", function () {
     it("Should return staker info", async function () {
       // ARRANGE
-      token.transfer(addr2.address, ethers.utils.parseEther("0.5"));
+      token.transfer(addr2.address, ethers.utils.parseEther("5"));
       console.log("Owner is %s", owner.address);
       console.log("Addr2 is %s", addr2.address);
 
@@ -70,6 +70,18 @@ describe("Betting Contract", function () {
         "Emirates Stadium",
         "Arsenal",
         "Barcelona",
+        "",
+        "",
+        0,
+        0
+      );
+
+      await lottery.createGame(
+        1,
+        "Aston Villa vs Burnley",
+        "Villa Park",
+        "Aston Villa",
+        "Burnley",
         "",
         "",
         0,
@@ -90,19 +102,27 @@ describe("Betting Contract", function () {
           ethers.utils.parseEther("0.05")
         );
 
+      await lottery
+        .connect(addr2)
+        .enterLottery(
+          1,
+          "Burnley",
+          token.address,
+          ethers.utils.parseEther("1")
+        );
+
       const staking = 0.05 * 0.95;
-      const stakedAmount = await lottery.balances(addr2.address);
+      const stakedAmount0 = await lottery.balances(0, addr2.address);
+      const stakedAmount1 = await lottery.balances(1, addr2.address);
 
       // Assert
       console.log("Staking %s", ethers.utils.parseEther(staking.toString()));
-      console.log("Staked amount is %s", stakedAmount.stakedAmount);
-      expect(stakedAmount.stakedAmount).to.equal(
-        ethers.utils.parseEther(staking.toString())
-      );
+      console.log("Staked 0 amount is %s", stakedAmount0.stakedAmount);
+      console.log("Staked 1 amount is %s", stakedAmount1.stakedAmount);
     });
   });
 
-  describe.only("Unstake amount", function () {
+  describe("Unstake amount", function () {
     it("Should return new balance", async function () {
       // ARRANGE
       token.transfer(addr1.address, ethers.utils.parseEther("500"));
@@ -138,16 +158,12 @@ describe("Betting Contract", function () {
       const oldBalance = await token.balanceOf(addr1.address);
       await lottery
         .connect(addr1)
-        .updateStakeBeforeStart(
-          0,
-          token.address,
-          ethers.utils.parseEther("100")
-        );
+        .updateStakeBeforeStart(0, ethers.utils.parseEther("100"));
       const newBalance = await token.balanceOf(addr1.address);
 
       // ASSERT
       const staking = 375;
-      const stakedAmount = await lottery.balances(addr1.address);
+      const stakedAmount = await lottery.balances(0, addr1.address);
       console.log("Staking %s", ethers.utils.parseEther(staking.toString()));
       console.log("Staked amount is %s", stakedAmount.stakedAmount);
       console.log("Wallet Balance old %s", oldBalance);
@@ -192,16 +208,12 @@ describe("Betting Contract", function () {
       console.log("This should revert with error");
 
       // ASSERT
-      const stakedAmount = await lottery.balances(addr1.address);
+      const stakedAmount = await lottery.balances(0, addr1.address);
       console.log("Staked amount is %s", stakedAmount.stakedAmount);
       await expect(
         lottery
           .connect(addr1)
-          .updateStakeBeforeStart(
-            0,
-            token.address,
-            ethers.utils.parseEther("55")
-          )
+          .updateStakeBeforeStart(0, ethers.utils.parseEther("55"))
       ).to.be.revertedWith("You try to unstake too much");
     });
   });
@@ -238,10 +250,10 @@ describe("Betting Contract", function () {
 
       // ACT
       const oldBalance = await token.balanceOf(addr1.address);
-      const stakedAmountBefore = await lottery.balances(addr1.address);
+      const stakedAmountBefore = await lottery.balances(0, addr1.address);
       await lottery.connect(owner).updateGame(0, "Arsenal", "2:1", 4);
-      await lottery.connect(addr1).claimAll(0, token.address);
-      const stakedAmountAfter = await lottery.balances(addr1.address);
+      await lottery.connect(addr1).claimAll(0);
+      const stakedAmountAfter = await lottery.balances(0, addr1.address);
       const newBalance = await token.balanceOf(addr1.address);
 
       // ASSERT

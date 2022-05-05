@@ -121,13 +121,12 @@ export function Games(props) {
     if (amount < 1) {
       return;
     }
-    console.log("Unstaking", amount);
     const amountToUnstake = ethers.utils.parseEther(amount.toString());
 
     try {
+      console.log("Unstaking", amountToUnstake.toString());
       const transaction = await contract.updateStakeBeforeStart(
         props.id,
-        token.address,
         amountToUnstake
       );
       await transaction.wait();
