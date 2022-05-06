@@ -5,6 +5,7 @@ import { contractInfo, gameInfo, tokenInfo, walletInfo } from "./atoms/atoms";
 import { useContract } from "./hooks/utilities";
 import styles from "../styles/Home.module.css";
 
+
 export function Games(props) {
   // list to simulate enum, enums are not supported in javascript
   const gameStatusEnum = [
@@ -28,6 +29,8 @@ export function Games(props) {
   const categoryOptions = [game.homeTeam, "Draw", game.awayTeam];
   const [amount, setAmount] = useState(0);
   const [staked, setStaked] = useState();
+  const [modalOpen, setModalOpen] = useState(false);
+  
 
   // use effect if metamask connected
   useEffect(() => {
@@ -265,6 +268,7 @@ export function Games(props) {
           </div>
         </div>
       )}
+
     </div>
   );
 }
