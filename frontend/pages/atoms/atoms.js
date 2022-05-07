@@ -44,3 +44,13 @@ export const contractInfo = atom({
     tvl: 0,
   },
 });
+
+export const modalInfo = atom({
+  key: "modalInfo",
+  default: {
+    open: false,
+    header: "Hello",
+    body: "Welcome to Decentralized Betting",
+    button: "Close",
+  },
+});

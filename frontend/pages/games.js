@@ -1,10 +1,15 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ethers } from "ethers";
-import { contractInfo, gameInfo, tokenInfo, walletInfo } from "./atoms/atoms";
+import {
+  contractInfo,
+  gameInfo,
+  tokenInfo,
+  walletInfo,
+  modalInfo,
+} from "./atoms/atoms";
 import { useContract } from "./hooks/utilities";
 import styles from "../styles/Home.module.css";
-
 
 export function Games(props) {
   // list to simulate enum, enums are not supported in javascript
@@ -30,7 +35,6 @@ export function Games(props) {
   const [amount, setAmount] = useState(0);
   const [staked, setStaked] = useState();
   const [modalOpen, setModalOpen] = useState(false);
-  
 
   // use effect if metamask connected
   useEffect(() => {
@@ -268,7 +272,6 @@ export function Games(props) {
           </div>
         </div>
       )}
-
     </div>
   );
 }

@@ -1,15 +1,14 @@
 import React from "react";
 import Topbar from "./topbar";
 import Canvas from "./canvas";
-import styles from "../styles/Home.module.css";
-import {Modal} from "./hooks/modal";
+import Modal from "../pages/components/modal";
 
 export default function Home() {
   return (
-    <div className={styles.container}>
-      <Modal title="Modal title" message="Modal window" />
+    <div className="bg-slate-800 text-slate-50 flex-1 min-h-screen">
       <Topbar />
       <Canvas />
+      <Modal />
     </div>
   );
 }
