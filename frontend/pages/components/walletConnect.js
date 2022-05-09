@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
-import { contractInfo, tokenInfo, walletInfo } from "./atoms/atoms";
-import tokenAddress from "../src/artifacts/Token-address.json";
-import tokenAbi from "../src/artifacts/Token-info.json";
-import contractAddress from "../src/artifacts/Lottery-address.json";
-import contractAbi from "../src/artifacts/Lottery-info.json";
-import styles from "../styles/Home.module.css";
-import { ellipseAddress } from "../pages/hooks/utilities.js";
+import { contractInfo, tokenInfo, walletInfo } from "../atoms/atoms";
+import tokenAddress from "../../src/artifacts/Token-address.json";
+import tokenAbi from "../../src/artifacts/Token-info.json";
+import contractAddress from "../../src/artifacts/Lottery-address.json";
+import contractAbi from "../../src/artifacts/Lottery-info.json";
+import styles from "../../styles/Home.module.css";
+import { ellipseAddress } from "../hooks/utilities";
 
 export function WalletButton() {
   const [hasMetamask, setHasMetamask] = useState();
@@ -69,7 +69,20 @@ export function WalletButton() {
 
   return (
     <div>
-      <button className={styles.loginbutton} onClick={connect}>
+      <button
+        id="connectBtn"
+        type="button"
+        class="
+        py-2 px-4
+        transition ease-in-out delay-150 duration-300
+        bg-blue-500
+        hover:bg-red-500
+        disabled:bg-slate-500 disabled:cursor-not-allowed
+        rounded-md pointer-events-auto
+        "
+        onClick={connect}
+        disabled={wallet.connected}
+      >
         {wallet.address ? (
           <p>{ellipseAddress(wallet.address, 8)}</p>
         ) : (

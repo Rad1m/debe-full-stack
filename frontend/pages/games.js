@@ -227,6 +227,7 @@ export function Games(props) {
               type="button"
               key="unstake"
               onClick={unstake}
+              disabled={staked <= 0}
             >
               Unstake
             </button>
@@ -253,7 +254,12 @@ export function Games(props) {
           <div className={styles.winnerBox}>Result {game.result}</div>
           <div className={styles.winnerBox}>Winner {game.winner}</div>
           <div className={styles.btnholder}>
-            <button className={styles.button} type="button" onClick={claim}>
+            <button
+              className={styles.button}
+              type="button"
+              onClick={claim}
+              disabled={staked <= 0}
+            >
               Claim
             </button>
           </div>
@@ -266,7 +272,12 @@ export function Games(props) {
             Game was cancelled. You can withdraw your staked amount.
           </div>
           <div className={styles.btnholder}>
-            <button className={styles.button} type="button" onClick={withdraw}>
+            <button
+              className={styles.button}
+              type="button"
+              onClick={withdraw}
+              disabled={staked <= 0}
+            >
               Withdraw
             </button>
           </div>

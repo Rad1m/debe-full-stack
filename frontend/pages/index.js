@@ -1,11 +1,11 @@
 import React from "react";
-import Topbar from "./topbar";
+import Topbar from "./components/topbar";
 import Canvas from "./canvas";
-import Modal from "../pages/components/modal";
+import Modal from "./components/modal";
 
 export default function Home() {
   return (
-    <div className="bg-slate-800 text-slate-50 flex-1 min-h-screen">
+    <div className="bg-slate-800 text-slate-50 flex-1 w-screen min-h-screen">
       <Topbar />
       <Canvas />
       <Modal />
