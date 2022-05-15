@@ -173,15 +173,23 @@ export function Games(props) {
   }
 
   return (
-    <div className={styles.card}>
-      <h2>{game.gameName}</h2>
-      <p>Playing at {game.stadium}</p>
-      <p>Game is {gameStatusEnum[game.gameStatus]}</p>
-      <p>
-        Pool stake {Number(ethers.utils.formatEther(game.totalAmountStaked))}{" "}
-        DEBE
-      </p>
-      <p>Your stake {Number(staked)} DEBE</p>
+    <div class="py-4 w-64 h-80 bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
+      <p class="text-center italic">Playing at {game.stadium}</p>
+      <div class="p-2 bg-sky-900 max-w-full justify-between items-center text-center align-middle">
+        <div class="flex items-center text-center align-middle text-md font-bold text-lg">
+          <p class="px-2">{game.homeTeam}</p>
+          <p class="rounded-full text-sm italic w-6 h-6 bg-blue-500">vs.</p>
+          <p class="px-2">{game.awayTeam}</p>
+        </div>
+      </div>
+      <div class="items-center text-center align-middle">
+        <p>Game is {gameStatusEnum[game.gameStatus]}</p>
+        <p>
+          Pool stake {Number(ethers.utils.formatEther(game.totalAmountStaked))}{" "}
+          DEBE
+        </p>
+        <p>Your stake {Number(staked)} DEBE</p>
+      </div>
 
       {(game.gameStatus === 0 || game.gameStatus === 5) && (
         <div className={styles.container}>

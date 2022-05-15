@@ -8,7 +8,11 @@ module.exports = {
     container: {
       center: true,
     },
-    extend: {},
+    extend: {
+      boxShadow: {
+        xl: "0 8px 16px 0px rgba(0, 0, 0, 0.5)",
+      },
+    },
   },
   variants: {
     extend: {
