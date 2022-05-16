@@ -173,7 +173,7 @@ export function Games(props) {
   }
 
   return (
-    <div class="py-4 w-64 h-80 bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
+    <div class="py-4 w-64 h-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
       <p class="text-center italic">Playing at {game.stadium}</p>
       <div class="p-2 bg-sky-900 max-w-full justify-between items-center text-center align-middle">
         <div class="flex items-center text-center align-middle text-md font-bold text-lg">
@@ -192,37 +192,41 @@ export function Games(props) {
       </div>
 
       {(game.gameStatus === 0 || game.gameStatus === 5) && (
-        <div className={styles.container}>
-          <div className={styles.border}>
-            {categoryOptions.map((category) => (
-              <button
-                type="button"
-                key={category}
-                className={
-                  category == winner
-                    ? styles.buttonGroupSelected
-                    : styles.buttonGroup
-                }
-                onClick={() => setWinner(category)}
-              >
-                {category}
-              </button>
-            ))}
+        <div>
+          <div className="bg-red-900 h-28 justify-center items-center text-center align-middle">
+            <div className=" py-1">
+              {categoryOptions.map((category) => (
+                <button
+                  type="button"
+                  key={category}
+                  className={
+                    category == winner
+                      ? styles.buttonGroupSelected
+                      : styles.buttonGroup
+                  }
+                  onClick={() => setWinner(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+            <form className="h-14 text-slate-50">
+              Amount:
+              <input
+                className="text-black text-center border-2 rounded-md hover:border-red-500 hover:border-2"
+                onChange={handleChange}
+                type="number"
+                name="amount"
+                id="amount"
+                value={amount}
+                required
+              />
+            </form>
           </div>
-          <form className={styles.form}>
-            Amount:
-            <input
-              onChange={handleChange}
-              type="number"
-              name="amount"
-              id="amount"
-              value={amount}
-              required
-            />
-          </form>
-          <div className={styles.btnholder}>
+          <div class="justify-center items-center text-center align-middle py-1">
             <button
-              className={styles.button}
+              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+                  bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               key="stake"
               onClick={enterLottery}
@@ -231,7 +235,8 @@ export function Games(props) {
               Stake
             </button>
             <button
-              className={styles.button}
+              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+                  bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               key="unstake"
               onClick={unstake}
@@ -244,13 +249,20 @@ export function Games(props) {
       )}
 
       {(game.gameStatus === 1 || game.gameStatus === 2) && (
-        <div className={styles.container}>
-          <div className={styles.infoBox}>
-            <p>Betting is closed... waiting for results.</p>
-            <p>You can claim after results are posted on the blockchain.</p>
+        <div>
+          <div className="bg-red-900 h-28 justify-center items-center text-center align-middle">
+            <div className="bg-info-darkblue text-info-green py-1 items-center h-28">
+              <p>Betting is closed... waiting for results.</p>
+              <p>You can claim after results are posted on the blockchain.</p>
+            </div>
           </div>
-          <div className={styles.btnholder}>
-            <button className={styles.button} type="button" disabled={true}>
+          <div class="justify-center items-center text-center align-middle py-1">
+            <button
+              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+                  bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
+              type="button"
+              disabled={true}
+            >
               Waiting...
             </button>
           </div>
@@ -258,12 +270,15 @@ export function Games(props) {
       )}
 
       {game.gameStatus === 3 && (
-        <div className={styles.container}>
-          <div className={styles.winnerBox}>Result {game.result}</div>
-          <div className={styles.winnerBox}>Winner {game.winner}</div>
-          <div className={styles.btnholder}>
+        <div>
+          <div className="bg-red-900 h-28 justify-center items-center text-center align-middle">
+            <div className={styles.winnerBox}>Result {game.result}</div>
+            <div className={styles.winnerBox}>Winner {game.winner}</div>
+          </div>
+          <div class="justify-center items-center text-center align-middle py-1">
             <button
-              className={styles.button}
+              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+                  bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               onClick={claim}
               disabled={staked <= 0}
@@ -275,13 +290,16 @@ export function Games(props) {
       )}
 
       {game.gameStatus === 4 && (
-        <div className={styles.container}>
-          <div className={styles.infoBox}>
-            Game was cancelled. You can withdraw your staked amount.
+        <div>
+          <div className="bg-red-900 h-28 justify-center items-center text-center align-middle">
+            <div className="bg-info-darkblue text-info-green py-1 text-center items-center align-middle h-28">
+              Game was cancelled. You can withdraw your staked amount.
+            </div>
           </div>
-          <div className={styles.btnholder}>
+          <div class="justify-center items-center text-center align-middle py-1">
             <button
-              className={styles.button}
+              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+                  bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               onClick={withdraw}
               disabled={staked <= 0}

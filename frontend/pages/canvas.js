@@ -1,6 +1,5 @@
 import React from "react";
 import { Games } from "./games";
-import styles from "../styles/Home.module.css";
 
 export default function Canvas() {
   let gameList = [];
@@ -13,8 +12,10 @@ export default function Canvas() {
   console.log("Canvas ready");
 
   return (
-    <div class="px-8 flex flex-wrap w-screen max-w-full gap-4 justify-between">
-      {gameList}
+    <div class="mt-4">
+      <div class="px-8 flex flex-wrap w-screen max-w-full gap-4 justify-between">
+        {gameList}
+      </div>
     </div>
   );
 }

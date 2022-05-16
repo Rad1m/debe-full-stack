@@ -12,6 +12,10 @@ module.exports = {
       boxShadow: {
         xl: "0 8px 16px 0px rgba(0, 0, 0, 0.5)",
       },
+      colors: {
+        "info-green": "#bbffae",
+        "info-darkblue": "#163646",
+      },
     },
   },
   variants: {
