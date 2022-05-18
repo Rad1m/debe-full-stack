@@ -175,6 +175,7 @@ export function Games(props) {
   return (
     <div class="py-4 w-64 h-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
       <p class="text-center italic">Playing at {game.stadium}</p>
+      <p class="text-center italic">Date: 16 June 2022</p>
       <div class="p-2 bg-sky-900 max-w-full justify-between items-center text-center align-middle">
         <div class="flex items-center text-center align-middle text-md font-bold text-lg">
           <p class="px-2">{game.homeTeam}</p>
@@ -223,9 +224,9 @@ export function Games(props) {
               />
             </form>
           </div>
-          <div class="justify-center items-center text-center align-middle py-1">
+          <div class="justify-center items-center text-center align-middle py-1 space-x-2">
             <button
-              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+              class="py-2 px-4 font-medium transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               key="stake"
@@ -235,7 +236,7 @@ export function Games(props) {
               Stake
             </button>
             <button
-              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+              class="py-2 px-4 font-medium transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               key="unstake"
@@ -250,7 +251,7 @@ export function Games(props) {
 
       {(game.gameStatus === 1 || game.gameStatus === 2) && (
         <div>
-          <div className="bg-red-900 h-28 justify-center items-center text-center align-middle">
+          <div className="h-28 justify-center items-center text-center align-middle">
             <div className="bg-info-darkblue text-info-green py-1 items-center h-28">
               <p>Betting is closed... waiting for results.</p>
               <p>You can claim after results are posted on the blockchain.</p>
@@ -271,11 +272,15 @@ export function Games(props) {
 
       {game.gameStatus === 3 && (
         <div>
-          <div className="bg-red-900 h-28 justify-center items-center text-center align-middle">
-            <div className={styles.winnerBox}>Result {game.result}</div>
-            <div className={styles.winnerBox}>Winner {game.winner}</div>
+          <div className="h-28 justify-center space-y-2 pt-5">
+            <div className="bg-info-darkblue text-info-green pt-1 h-8 text-center">
+              Result {game.result}
+            </div>
+            <div className="bg-info-darkblue text-info-green h-8 pt-1 text-center">
+              Winner {game.winner}
+            </div>
           </div>
-          <div class="justify-center items-center text-center align-middle py-1">
+          <div class="justify-center text-center py-1">
             <button
               class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
