@@ -194,16 +194,16 @@ export function Games(props) {
 
       {(game.gameStatus === 0 || game.gameStatus === 5) && (
         <div>
-          <div className="bg-red-900 h-28 justify-center items-center text-center align-middle">
-            <div className=" py-1">
+          <div className=" h-28 justify-between items-center text-center align-middle">
+            <div className="bg-slate-800 py-1">
               {categoryOptions.map((category) => (
                 <button
                   type="button"
                   key={category}
                   className={
                     category == winner
-                      ? styles.buttonGroupSelected
-                      : styles.buttonGroup
+                      ? "bg-green-300 py-1 px-2 font-semibold text-slate-700 w-2/6 rounded-sm"
+                      : "bg-slate-600 px-2 py-1  hover:text-red-500 w-2/6"
                   }
                   onClick={() => setWinner(category)}
                 >
@@ -211,7 +211,7 @@ export function Games(props) {
                 </button>
               ))}
             </div>
-            <form className="h-14 text-slate-50">
+            <form className="h-14 text-slate-50 py-1">
               Amount:
               <input
                 className="text-black text-center border-2 rounded-md hover:border-red-500 hover:border-2"
