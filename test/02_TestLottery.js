@@ -26,6 +26,8 @@ describe("Betting Contract", function () {
     await lottery.deployed();
   });
 
+  let date = 1658680436;
+
   describe("Create game", function () {
     it("Should return game status", async function () {
       // ARRANGE
@@ -33,6 +35,7 @@ describe("Betting Contract", function () {
         0,
         "Arsenal vs Barcelona",
         "Emirates Stadium",
+        date,
         "Arsenal",
         "Barcelona",
         "",
@@ -63,11 +66,13 @@ describe("Betting Contract", function () {
       token.transfer(addr2.address, ethers.utils.parseEther("5"));
       console.log("Owner is %s", owner.address);
       console.log("Addr2 is %s", addr2.address);
+      let date = 1658680436;
 
       await lottery.createGame(
         0,
         "Arsenal vs Barcelona",
         "Emirates Stadium",
+        date,
         "Arsenal",
         "Barcelona",
         "",
@@ -80,6 +85,7 @@ describe("Betting Contract", function () {
         1,
         "Aston Villa vs Burnley",
         "Villa Park",
+        date,
         "Aston Villa",
         "Burnley",
         "",
@@ -128,11 +134,13 @@ describe("Betting Contract", function () {
       token.transfer(addr1.address, ethers.utils.parseEther("500"));
       console.log("Owner is %s", owner.address);
       console.log("Addr1 is %s", addr1.address);
+      let date = 1658680436;
 
       await lottery.createGame(
         0,
         "Arsenal vs Barcelona",
         "Emirates Stadium",
+        date,
         "Arsenal",
         "Barcelona",
         "",
@@ -178,11 +186,13 @@ describe("Betting Contract", function () {
     it("Should revert with error", async function () {
       // ARRANGE
       token.transfer(addr1.address, ethers.utils.parseEther("500"));
+      let date = 1658680436;
 
       await lottery.createGame(
         0,
         "Arsenal vs Barcelona",
         "Emirates Stadium",
+        date,
         "Arsenal",
         "Barcelona",
         "",
@@ -222,11 +232,13 @@ describe("Betting Contract", function () {
     it("Should unstake total amount of tokens", async function () {
       // ARRANGE
       token.transfer(addr1.address, ethers.utils.parseEther("1500"));
+      let date = 1658680436;
 
       await lottery.createGame(
         0,
         "Arsenal vs Barcelona",
         "Emirates Stadium",
+        date,
         "Arsenal",
         "Barcelona",
         "",

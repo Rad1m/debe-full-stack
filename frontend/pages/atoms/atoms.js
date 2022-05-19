@@ -6,6 +6,7 @@ export const gameInfo = atomFamily({
     gameId: 0,
     gameName: "",
     stadium: "",
+    date: 0,
     homeTeam: "",
     awayTeam: "",
     winner: "",

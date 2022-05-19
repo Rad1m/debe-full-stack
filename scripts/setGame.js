@@ -10,10 +10,13 @@ async function main() {
   );
   const [sender] = await ethers.getSigners();
 
+  let gameDate = 1658680436;
+
   const tx0 = await lottery.createGame(
     0,
     "Arsenal vs Barcelona",
     "Emirates Stadium",
+    gameDate,
     "Arsenal",
     "Barcelona",
     "",
@@ -28,6 +31,7 @@ async function main() {
     1,
     "Aston Villa vs Burnley",
     "Villa Park",
+    gameDate,
     "Aston Villa",
     "Burnley",
     "Burnley",
@@ -42,6 +46,7 @@ async function main() {
     2,
     "Newcastle vs Wolves",
     "St. James' Park",
+    gameDate,
     "Newcastle",
     "Wolves",
     "",
@@ -56,6 +61,7 @@ async function main() {
     3,
     "Everton vs Man United",
     "Goodison Park",
+    gameDate,
     "Everton",
     "Man United",
     "Everton",
@@ -70,6 +76,7 @@ async function main() {
     4,
     "Southampton vs Chelsea",
     "St. Mary's Stadium",
+    gameDate,
     "Southampton",
     "Chelsea",
     "",
@@ -84,6 +91,7 @@ async function main() {
     5,
     "Norwich vs Burnley",
     "Carrow Road",
+    gameDate,
     "Norwich",
     "Burnley",
     "",

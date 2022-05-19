@@ -72,6 +72,7 @@ export function Games(props) {
         gameId: gameInfo.gameId,
         gameName: gameInfo.gameName,
         stadium: gameInfo.stadium,
+        date: gameInfo.date,
         homeTeam: gameInfo.homeTeam,
         awayTeam: gameInfo.awayTeam,
         winner: gameInfo.winner,
@@ -173,7 +174,7 @@ export function Games(props) {
   }
 
   return (
-    <div class="py-4 w-64 h-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
+    <div class="py-2 w-64 h-[350px] bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
       <p class="text-center italic">Playing at {game.stadium}</p>
       <p class="text-center italic">Date: 16 June 2022</p>
       <div class="p-2 bg-sky-900 max-w-full justify-between items-center text-center align-middle">
@@ -194,8 +195,8 @@ export function Games(props) {
 
       {(game.gameStatus === 0 || game.gameStatus === 5) && (
         <div>
-          <div className=" h-28 justify-between items-center text-center align-middle">
-            <div className="bg-slate-800 py-1">
+          <div className="h-28 bg-info-darkblue justify-between items-center text-center align-middle">
+            <div className="py-2">
               {categoryOptions.map((category) => (
                 <button
                   type="button"
@@ -224,7 +225,7 @@ export function Games(props) {
               />
             </form>
           </div>
-          <div class="justify-center items-center text-center align-middle py-1 space-x-2">
+          <div class="justify-center items-center text-center align-middle space-x-2 mt-3 ">
             <button
               class="py-2 px-4 font-medium transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
@@ -257,7 +258,7 @@ export function Games(props) {
               <p>You can claim after results are posted on the blockchain.</p>
             </div>
           </div>
-          <div class="justify-center items-center text-center align-middle py-1">
+          <div class="justify-center items-center text-center align-middle mt-3">
             <button
               class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
@@ -272,15 +273,15 @@ export function Games(props) {
 
       {game.gameStatus === 3 && (
         <div>
-          <div className="h-28 justify-center space-y-2 pt-5">
-            <div className="bg-info-darkblue text-info-green pt-1 h-8 text-center">
+          <div className="h-28 bg-info-darkblue justify-center space-y-2 pt-5">
+            <div className="bg-slate-800 text-info-green pt-1 h-8 text-center">
               Result {game.result}
             </div>
-            <div className="bg-info-darkblue text-info-green h-8 pt-1 text-center">
+            <div className="bg-slate-800 text-info-green h-8 pt-1 text-center">
               Winner {game.winner}
             </div>
           </div>
-          <div class="justify-center text-center py-1">
+          <div class="justify-center text-center mt-3">
             <button
               class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
@@ -301,7 +302,7 @@ export function Games(props) {
               Game was cancelled. You can withdraw your staked amount.
             </div>
           </div>
-          <div class="justify-center items-center text-center align-middle py-1">
+          <div class="justify-center items-center text-center align-middle mt-3">
             <button
               class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
