@@ -66,13 +66,17 @@ export function Games(props) {
       );
       const gameInfo = await stakingContract.games(props.id);
       const balances = await stakingContract.balances(props.id, wallet.address);
+      const date = new Date(gameInfo.date * 1000);
+
       setStaked(ethers.utils.formatEther(balances.stakedAmount));
       setContract(stakingContract);
       setGame({
         gameId: gameInfo.gameId,
         gameName: gameInfo.gameName,
         stadium: gameInfo.stadium,
-        date: gameInfo.date,
+        timestamp: gameInfo.date,
+        date: date.toDateString(),
+        time: date.toTimeString(),
         homeTeam: gameInfo.homeTeam,
         awayTeam: gameInfo.awayTeam,
         winner: gameInfo.winner,
@@ -175,8 +179,8 @@ export function Games(props) {
 
   return (
     <div class="py-2 w-64 h-[350px] bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
-      <p class="text-center italic">Playing at {game.stadium}</p>
-      <p class="text-center italic">Date: 16 June 2022</p>
+      <p class="text-center italic font-bold">Playing at {game.stadium}</p>
+      <p class="text-center text-xs">Date: {game.date}</p>
       <div class="p-2 bg-sky-900 max-w-full justify-between items-center text-center align-middle">
         <div class="flex items-center text-center align-middle text-md font-bold text-lg">
           <p class="px-2">{game.homeTeam}</p>
