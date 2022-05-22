@@ -34,7 +34,7 @@ export function Games(props) {
   const categoryOptions = [game.homeTeam, "Draw", game.awayTeam];
   const [amount, setAmount] = useState(0);
   const [staked, setStaked] = useState();
-  const [modalOpen, setModalOpen] = useState(false);
+  const [showModal, setShowModal] = useRecoilState(modalInfo);
 
   // use effect if metamask connected
   useEffect(() => {
@@ -95,6 +95,13 @@ export function Games(props) {
     console.log("Staking", amount);
     if (amount < 10) {
       console.log("Increase staking amount");
+      setShowModal((prevState) => ({
+        ...prevState,
+        open: true,
+        header: "WARNING!",
+        body: "Minimum amount to stake is 10 DEBE",
+        button: "Acknowledge",
+      }));
       return;
     }
     try {
@@ -131,6 +138,13 @@ export function Games(props) {
 
   const unstake = async () => {
     if (amount < 1) {
+      setShowModal((prevState) => ({
+        ...prevState,
+        open: true,
+        header: "WARNING!",
+        body: "Minimum amount to unstake is 1 DEBE",
+        button: "Close",
+      }));
       return;
     }
     const amountToUnstake = ethers.utils.parseEther(amount.toString());
@@ -178,17 +192,17 @@ export function Games(props) {
   }
 
   return (
-    <div class="py-2 w-64 h-[350px] bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
-      <p class="text-center italic font-bold">Playing at {game.stadium}</p>
-      <p class="text-center text-xs">Date: {game.date}</p>
-      <div class="p-2 bg-sky-900 max-w-full justify-between items-center text-center align-middle">
-        <div class="flex items-center text-center align-middle text-md font-bold text-lg">
-          <p class="px-2">{game.homeTeam}</p>
-          <p class="rounded-full text-sm italic w-6 h-6 bg-blue-500">vs.</p>
-          <p class="px-2">{game.awayTeam}</p>
+    <div className="py-2 w-64 h-[350px] bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg hover:shadow-xl hover:shadow-green-500">
+      <p className="text-center italic font-bold">Playing at {game.stadium}</p>
+      <p className="text-center text-xs">Date: {game.date}</p>
+      <div className="py-2 bg-sky-900 max-w-full justify-between items-center text-center align-middle">
+        <div className="flex items-center text-center align-middle text-md font-bold text-lg">
+          <p className="w-32 truncate ">{game.homeTeam}</p>
+          <p className="rounded-full text-sm italic w-6 h-6 bg-blue-500">vs.</p>
+          <p className="w-32 truncate">{game.awayTeam}</p>
         </div>
       </div>
-      <div class="items-center text-center align-middle">
+      <div className="items-center text-center align-middle">
         <p>Game is {gameStatusEnum[game.gameStatus]}</p>
         <p>
           Pool stake {Number(ethers.utils.formatEther(game.totalAmountStaked))}{" "}
@@ -229,9 +243,9 @@ export function Games(props) {
               />
             </form>
           </div>
-          <div class="justify-center items-center text-center align-middle space-x-2 mt-3 ">
+          <div className="justify-center items-center text-center align-middle space-x-2 mt-3 ">
             <button
-              class="py-2 px-4 font-medium transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+              className="py-2 px-4 font-medium transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               key="stake"
@@ -241,7 +255,7 @@ export function Games(props) {
               Stake
             </button>
             <button
-              class="py-2 px-4 font-medium transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+              className="py-2 px-4 font-medium transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               key="unstake"
@@ -262,9 +276,9 @@ export function Games(props) {
               <p>You can claim after results are posted on the blockchain.</p>
             </div>
           </div>
-          <div class="justify-center items-center text-center align-middle mt-3">
+          <div className="justify-center items-center text-center align-middle mt-3">
             <button
-              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+              className="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               disabled={true}
@@ -285,9 +299,9 @@ export function Games(props) {
               Winner {game.winner}
             </div>
           </div>
-          <div class="justify-center text-center mt-3">
+          <div className="justify-center text-center mt-3">
             <button
-              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+              className="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               onClick={claim}
@@ -306,9 +320,9 @@ export function Games(props) {
               Game was cancelled. You can withdraw your staked amount.
             </div>
           </div>
-          <div class="justify-center items-center text-center align-middle mt-3">
+          <div className="justify-center items-center text-center align-middle mt-3">
             <button
-              class="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
+              className="py-2 px-4 font-medium mr-2 mb-2 transition ease-in-out delay-150 duration-300 rounded-md pointer-events-auto
                   bg-blue-500 hover:bg-red-500 disabled:bg-slate-500 disabled:cursor-not-allowed"
               type="button"
               onClick={withdraw}

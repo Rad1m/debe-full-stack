@@ -7,15 +7,17 @@ export default function Topbar() {
   const wallet = useRecoilValue(walletInfo);
 
   return (
-    <nav class="flex items-center justify-between bg-slate-900 px-8 py-4">
-      <div class="container max-w-xs w-1/4">
-        <p class="font-bold text-4xl">DEBE</p>
+    <nav className="flex items-center justify-between bg-slate-900 px-8 py-4">
+      <div className="container max-w-xs w-1/4">
+        <p className="font-bold text-4xl">DEBE</p>
       </div>
-      <div class="container sm mx-auto">
-        <p class="font-semibold text-4xl text-center">Decentralized Betting</p>
+      <div className="container sm mx-auto">
+        <p className="font-semibold text-4xl text-center">
+          Decentralized Betting
+        </p>
       </div>
-      <div class="container text-center w-1/4 max-w-xs">
-        <p class="font-semibold text-sm">
+      <div className="container text-center w-1/4 max-w-xs">
+        <p className="font-semibold text-sm">
           Balance {Number(wallet.balance)} DEBE
         </p>
         <WalletButton />

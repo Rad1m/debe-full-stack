@@ -6,7 +6,6 @@ import tokenAddress from "../../src/artifacts/Token-address.json";
 import tokenAbi from "../../src/artifacts/Token-info.json";
 import contractAddress from "../../src/artifacts/Lottery-address.json";
 import contractAbi from "../../src/artifacts/Lottery-info.json";
-import styles from "../../styles/Home.module.css";
 import { ellipseAddress } from "../hooks/utilities";
 
 export function WalletButton() {
@@ -72,7 +71,7 @@ export function WalletButton() {
       <button
         id="connectBtn"
         type="button"
-        class="
+        className="
         py-2 px-4
         transition ease-in-out delay-150 duration-300
         bg-blue-500
